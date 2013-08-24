@@ -96,11 +96,9 @@
 # 
 #++
 module SES
-  #--
   # ============================================================================
   # Win32
   # ============================================================================
-  #++
   # Contains references to Windows API functions.
   module Win32
     BringWindowToTop = Win32API.new('user32',   'BringWindowToTop', 'I',  'I')
@@ -125,11 +123,9 @@ module SES
     def self.focus(window_handle = HWND::Game)
       BringWindowToTop.call(window_handle) != 0
     end
-    #--
     # ==========================================================================
     # HWND
     # ==========================================================================
-    #++
     # Contains references to window handles used by the Windows API.
     module HWND
       # Window handles are found with explicit names to ensure that the window
@@ -140,11 +136,9 @@ module SES
         'RGSS Player', load_data('Data/System.rvdata2').game_title)
     end
   end
-  #--
   # ============================================================================
   # Console
   # ============================================================================
-  #++
   # Provides methods to facilitate an interactive Ruby console environment.
   module Console
     # ==========================================================================
@@ -282,11 +276,9 @@ module SES
     end
   end
 end
-#--
 # ==============================================================================
 # Scene_Base
 # ==============================================================================
-#++
 class Scene_Base
   # Only update the SES Console's enabled status if the game is being run in
   # test mode and the console window is shown.
@@ -307,11 +299,9 @@ class Scene_Base
     end
   end
 end
-#--
 # ==============================================================================
 # Main
 # ==============================================================================
-#++
 # Linking the Console constant in main to SES::Console. This allows you to use
 # the console from the top-level namespace with Console instead of SES::Console.
 Console = SES::Console

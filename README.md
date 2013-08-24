@@ -56,7 +56,7 @@ use the following:
 
   **NOTE:** New macros added to the MACRO_DIR directory while the game is run
 in test mode will not be found automatically. If this occurs, you will have to
-manually rebuild the macro listing by calling the 'Console.load_macros'
+manually rebuild the macro listing by calling the `Console.load_macros`
 method. Once called, all detected macros will be added to the @macros hash.
 
   **NOTE:** Two macros have special functionality: 'setup' and 'teardown'. The
@@ -85,7 +85,7 @@ keep in mind that this suppresses the display of exceptions, too.
 
 License
 ------------------------------------------------------------------------------
-This script is made available under the terms of the MIT Expat license. Visit
+  This script is made available under the terms of the MIT Expat license. View
 [this page](http://sesvxace.wordpress.com/license/) for more information.
 
 Installation
@@ -93,3 +93,4 @@ Installation
   Place this script below the SES Core (v2.0) script (if you are using it) or
 the Materials header, but above all other custom scripts. This script does not
 require the SES Core (v2.0), but it is recommended.
+
