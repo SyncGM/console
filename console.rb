@@ -56,7 +56,7 @@
 # 
 #   **NOTE:** New macros added to the MACRO_DIR directory while the game is run
 # in test mode will not be found automatically. If this occurs, you will have to
-# manually rebuild the macro listing by calling the 'Console.load_macros'
+# manually rebuild the macro listing by calling the `Console.load_macros`
 # method. Once called, all detected macros will be added to the @macros hash.
 # 
 #   **NOTE:** Two macros have special functionality: 'setup' and 'teardown'. The
@@ -85,7 +85,7 @@
 # 
 # License
 # ------------------------------------------------------------------------------
-# This script is made available under the terms of the MIT Expat license. Visit
+#   This script is made available under the terms of the MIT Expat license. View
 # [this page](http://sesvxace.wordpress.com/license/) for more information.
 # 
 # Installation
