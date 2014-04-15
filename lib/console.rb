@@ -1,5 +1,5 @@
 #--
-# Console v1.0 by Solistra and Enelvon
+# Console v1.1 by Solistra and Enelvon
 # =============================================================================
 # 
 # Summary
@@ -14,13 +14,13 @@
 #   In order to activate the console, press F5 (by default -- this is able to
 # configured in the configuration area). By default, one line of code is
 # evaluated at a time. To stop the interactive interpreter and return to the
-# game, simply use the `exit` method provided by the Kernel module. (**NOTE:**
-# If you are in the context of an object which has an alternative `exit` method
-# defined -- such as SceneManager -- you will have to explicitly call the
-# `Kernel.exit` method or raise a SystemExit exception.)
+# game, simply use the `exit` method provided by the `Kernel` module.
+# (**NOTE:** If you are in the context of an object which has an alternative
+# `exit` method defined -- such as `SceneManager` -- you will have to call the
+# `Kernel.exit` method explicitly or raise a `SystemExit` exception.)
 # 
 #   In order to evaluate multiple lines, use the `Console.multiline` method and
-# eval its output like so:
+# `eval` its output like so:
 # 
 #     eval Console.multiline
 # 
@@ -40,10 +40,10 @@
 # in the context of event 5 on the current map. You can also bind the console
 # to the top-level Ruby execution context by passing the Main constant to the
 # `Console.bind` method, which will evaluate code in Main. To rebind the
-# console back to the SES::Console module, use the method `Console.rebind`.
+# console back to the `SES::Console` module, use the method `Console.rebind`.
 # 
 #   In addition to this, the SES Console allows the use of external Ruby files
-# known as 'macros.' These files must be stored in the configurable MACRO_DIR
+# known as 'macros.' These files must be stored in the configurable `MACRO_DIR`
 # directory in your project's root directory. Each macro must have a unique
 # filename ending in the '.rb' file extension to be recognized by this script.
 # Macros may also be placed in subdirectories for organization, but filenames
@@ -54,10 +54,10 @@
 # 
 #     Console.macro(:read_file)
 # 
-#   **NOTE:** New macros added to the MACRO_DIR directory while the game is run
-# in test mode will not be found automatically. If this occurs, you will have
-# to manually rebuild the macro listing by calling the `Console.load_macros`
-# method. Once called, all detected macros will be added to the @macros hash.
+#   **NOTE:** New macros added to the `MACRO_DIR` directory while the game is
+# run in test mode will *not* be found automatically. If this occurs, you will
+# have to rebuild the macro listing by calling the `Console.load_macros`
+# method. Once called, all detected macros will be added to the `@macros` hash.
 # 
 #   **NOTE:** Two macros have special functionality: 'setup' and 'teardown'.
 # The 'setup' macro is run whenever the SES Console is opened via its `open`
@@ -80,7 +80,7 @@
 # 
 #     Console.evaluate(%{puts 'Hi, there.'}, true)
 # 
-#   **NOTE:** The 'nil' return value of the 'puts' method is suppressed... but
+#   **NOTE:** The `nil` return value of the `puts` method is suppressed... but
 # keep in mind that this suppresses the display of exceptions, too.
 # 
 # License
@@ -183,9 +183,15 @@ module SES
     # SES::Console.
     def self.const_missing(sym)
       begin
-        @context == self ? super : @context.class.const_get(sym)
+        @context == self ? raise(NameError) : @context.class.const_get(sym)
       rescue NameError => ex
-        @context.const_get(sym) rescue raise(ex)
+        if @context == self
+          # If the context is SES::Console, raise a new NameError to avoid
+          # calling `const_missing` recursively.
+          raise(NameError.new("uninitialized constant Module::#{sym.to_s}"))
+        else
+          @context.const_get(sym) rescue raise(ex)
+        end
       end
     end
     
@@ -273,7 +279,7 @@ module SES
     end
     # Register this script with the SES Core if it exists.
     if SES.const_defined?(:Register)
-      Description = Script.new(:Console, 1.0)
+      Description = Script.new(:Console, 1.1)
       Register.enter(Description)
     end
   end
