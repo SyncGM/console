@@ -7,30 +7,17 @@
 #++
 module SES::Console::Macros
   # ===========================================================================
-  # Setup
+  # BEGIN CONFIGURATION
   # ===========================================================================
-  # Provides the welcome message and logic determining its display.
-  module Setup
-    # =========================================================================
-    # BEGIN CONFIGURATION
-    # =========================================================================
-    # Macro references to automatically load when the SES Console is opened for
-    # the first time. Macros which set up an environment are recommended.
-    # 
-    # **NOTE:** These macro files are _loaded_, not passed to the SES Console's
-    # `macro` method -- there is a difference in terms of execution.
-    AUTO_LOAD = [
-      :extensions,
-      :files_setup,
-      :shell_setup,
-    ]
-    
-    # Default prompt to use for user input during macro evaluation.
-    SES::Console.prompt[:macro] = '?> '
-    # =========================================================================
-    # END CONFIGURATION
-    # =========================================================================
-  end
+  # Default prompt to use for user input during macro evaluation.
+  SES::Console.prompt[:macro] = '?> '
+  
+  # Used to search for files to automatically load when the console is opened
+  # for the first time. Files which set up some form of environment should be
+  # placed here.
+  AUTOLOAD = SES::Console::MACRO_DIR + '/autoload/**/*.*'
+  # ===========================================================================
+  # END CONFIGURATION
   # ===========================================================================
   # Macros
   # ===========================================================================
@@ -72,9 +59,7 @@ module SES::Console::Macros
     # Display the message and set `@run` to true if the SES Console has not
     # yet been run during this test run.
     unless run?
-      AUTO_LOAD.each do |macro|
-        load SES::Console.instance_variable_get(:@macros)[macro]
-      end
+      Dir[AUTOLOAD].each { |macro| load macro }
       display_message
       @run = true
     end
