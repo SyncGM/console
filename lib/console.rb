@@ -1,6 +1,7 @@
 #--
-# Console v1.1 by Solistra and Enelvon
+# Console v1.2 by Solistra and Enelvon
 # =============================================================================
+# TODO: Update documentation for version 1.2.
 # 
 # Summary
 # -----------------------------------------------------------------------------
@@ -18,6 +19,9 @@
 # (**NOTE:** If you are in the context of an object which has an alternative
 # `exit` method defined -- such as `SceneManager` -- you will have to call the
 # `Kernel.exit` method explicitly or raise a `SystemExit` exception.)
+# 
+#   **NOTE:** You may also use the `exit!` method provided by `Kernel` to close
+# the game immediately directly from the console.
 # 
 #   In order to evaluate multiple lines, use the `Console.multiline` method and
 # `eval` its output like so:
@@ -40,7 +44,7 @@
 # in the context of event 5 on the current map. You can also bind the console
 # to the top-level Ruby execution context by passing the Main constant to the
 # `Console.bind` method, which will evaluate code in Main. To rebind the
-# console back to the `SES::Console` module, use the method `Console.rebind`.
+# console back to the user-defined `CONTEXT`, use the method `Console.rebind`.
 # 
 #   In addition to this, the SES Console allows the use of external Ruby files
 # known as 'macros.' These files must be stored in the configurable `MACRO_DIR`
@@ -80,9 +84,6 @@
 # 
 #     Console.evaluate(%{puts 'Hi, there.'}, true)
 # 
-#   **NOTE:** The `nil` return value of the `puts` method is suppressed... but
-# keep in mind that this suppresses the display of exceptions, too.
-# 
 # License
 # -----------------------------------------------------------------------------
 #   This script is made available under the terms of the MIT Expat license.
@@ -114,16 +115,15 @@ module SES
     end
     
     # Sets the title of the RGSS Console window to the passed title.
-    def self.console_title=(title = nil)
-      SetConsoleTitle.call(title || 'RGSS Console')
+    def self.console_title=(title)
+      SetConsoleTitle.call((title || 'RGSS Console').to_s)
     end
     
     # Brings the window referenced by the passed window handle to the top of
     # the Windows Z-order and focuses it. Returns true if the window was raised
     # successfully, false otherwise.
-    def self.focus(window_handle = HWND::Game)
-      BringWindowToTop.call(window_handle) != 0
-    end
+    def self.focus(hwnd = HWND::Game) BringWindowToTop.call(hwnd) != 0 end
+    
     # =========================================================================
     # HWND
     # =========================================================================
@@ -159,13 +159,12 @@ module SES
     
     # The default evaluation context. Recommended values are either 'self' or
     # 'TOPLEVEL_BINDING' (which will cause evaluation to occur in Main).
-    @context = self
+    CONTEXT = self
     
     # Hash of prompt styles for different interpreter states.
     @prompt = {
       :error     => '!> ',
       :input     => '>> ',
-      :macro     => '?> ',
       :multiline => '^  ',
       :multi_end => '<<' ,
       :return    => '=> '
@@ -173,6 +172,7 @@ module SES
     # =========================================================================
     # END CONFIGURATION
     # =========================================================================
+    @context = CONTEXT
     class << self
       attr_accessor :enabled, :context
       attr_reader   :prompt
@@ -182,17 +182,9 @@ module SES
     # context. Without this, they would be viewed as nil unless present in
     # SES::Console.
     def self.const_missing(sym)
-      begin
-        @context == self ? raise(NameError) : @context.class.const_get(sym)
-      rescue NameError => ex
-        if @context == self
-          # If the context is SES::Console, raise a new NameError to avoid
-          # calling `const_missing` recursively.
-          raise(NameError.new("uninitialized constant Module::#{sym.to_s}"))
-        else
-          @context.const_get(sym) rescue raise(ex)
-        end
-      end
+      @context == self ? super : @context.class.const_get(sym)
+    rescue NameError => ex
+      @context == self ? raise(ex) : @context.const_get(sym)
     end
     
     # Macro definition from external .rb files in the Macros directory. Macros
@@ -200,52 +192,45 @@ module SES
     # to symbols and values are relative paths to macro files.
     def self.load_macros
       Dir.mkdir(MACRO_DIR) unless Dir.exist?(MACRO_DIR)
-      @macros = Dir.glob("#{MACRO_DIR}/**/*.rb").each_with_object({}) do |m, h|
-        h[File.basename(m, '.rb').to_sym] = m
+      @macros = Dir["#{MACRO_DIR}/**/*.*"].each_with_object({}) do |macro, hash|
+        hash[File.basename(macro, '.*').to_sym] = macro
       end
     end
     
-    # Sets the evaluation context of the SES Console to the passed object.
-    def self.bind(object)
-      @context = object
+    # Sets the evaluation context of the SES Console to the passed object. The
+    # context is only set for the duration of the block if one is given.
+    def self.bind(object, &block)
+      block_given? ? object.instance_exec(&block) : @context = object
     end
     
-    # Rebinds the SES Console's evaluation context to the SES::Console module.
-    def self.rebind
-      @context = self
+    # Rebinds the SES Console's evaluation context to the value of CONTEXT. The
+    # context is only reset for the duration of the block if one is given.
+    def self.rebind(&block)
+      block_given? ? CONTEXT.instance_exec(&block) : @context = CONTEXT
     end
     
     # Evaluates the content of the macro file referenced by the passed id.
-    # NOTE: macros are evaluated silently -- that is, without showing return
-    # values or exception information.
     def self.macro(id)
       raise(LoadError.new("No macro '#{id}' found.")) unless @macros[id]
-      evaluate(File.open(@macros[id], 'r') { |f| f.read }, true)
+      eval File.read(@macros[id])
+      #evaluate(File.read(@macros[id]), true)
     end
     
     # Performs evaluation of the passed string. Evaluation may be performed
     # silently by passing a 'true' value to the 'silent' parameter.
-    def self.evaluate(script, silent = false)
-      begin
-        # Main script evaluation code. Allows scripts to be executed within the
-        # context of the @context instance variable's stored object. Returns
-        # the return value of the evaluated Ruby code.
-        return_value = @context.send(:eval, script)
-        print(@prompt[:return], return_value.inspect, "\n") unless silent
-        return_value
-      rescue SystemExit
-        # Refocus on the Game.exe window and stop all SES Console evaluation if
-        # the console has been exited with Kernel#exit or a raised SystemExit
-        # exception.
-        @enabled = false
-        sleep(0.1) # Prevent input from unintentionally passing to the game.
-        Win32.focus(Win32::HWND::Game)
-      rescue Exception => ex
-        # Print basic exception information and return the exception if any
-        # form of exception is encountered during evaluation.
-        print("#{@prompt[:error]}#{ex.class}: #{ex.message}\n") unless silent
-        ex
+    def self.evaluate(script = '', silent = false, &block)
+      v = block ? @context.instance_exec(&block) : @context.send(:eval, script)
+      unless silent
+        print(@prompt[:return], v == Kernel.main ? 'main' : v.inspect, "\n")
       end
+      v
+    rescue SystemExit
+      @enabled = false
+      sleep(0.1) # Prevent input from unintentionally passing to the game.
+      Win32.focus(Win32::HWND::Game)
+    rescue Exception => ex
+      print("#{@prompt[:error]}#{ex.class}: #{ex.message}\n")
+      ex
     end
     
     # Enables multiple lines of input. This method collects strings of user
@@ -264,58 +249,53 @@ module SES
     
     # Opens the console for evaluation. Evaluation will continue until the
     # SES Console is disabled or the passed script is completed.
-    def self.open(script = nil)
+    def self.open(script = nil, &block)
       load_macros unless @macros
-      # Run the 'setup' macro if it exists.
       macro(:setup) if @macros[:setup]
-      Win32.focus(Win32::HWND::Console) unless script
+      warn('** WARNING: Block given, script ignored. **') if block && script
+      Win32.focus(Win32::HWND::Console) unless script || block_given?
       begin
-        print(@prompt[:input])
-        evaluate(script || gets)
-        @enabled = false if script
+        print(@prompt[:input]) unless script || block_given?
+        evaluate(script || gets, &block)
+        @enabled = false if script || block_given?
       end while @enabled
-      # Run the 'teardown' macro if it exists.
       macro(:teardown) if @macros[:teardown]
     end
+    
     # Register this script with the SES Core if it exists.
     if SES.const_defined?(:Register)
-      Description = Script.new(:Console, 1.1)
-      Register.enter(Description)
+      Register.enter(Description = Script.new(:Console, 1.2))
     end
   end
 end
 # =============================================================================
 # Scene_Base
 # =============================================================================
+# Superclass of all scenes within the game.
 class Scene_Base
-  # Only update the SES Console's enabled status if the game is being run in
-  # test mode and the console window is shown.
-  if $TEST && SES::Win32::HWND::Console > 0
-    alias :ses_console_sb_upd :update
-    def update(*args, &block)
-      update_ses_console
-      ses_console_sb_upd(*args, &block)
-    end
-    
-    def update_ses_console
-      # Enable and open the SES Console if the SES Console's configured TRIGGER
-      # has been registered as triggered by the RMVX Ace Input module.
-      if Input.trigger?(SES::Console::TRIGGER)
-        SES::Console.enabled = true
-        SES::Console.open
-      end
+  # Aliased to update the calling conditions for opening the SES Console.
+  alias :ses_console_sb_upd :update
+  def update(*args, &block)
+    update_ses_console
+    ses_console_sb_upd(*args, &block)
+  end
+  
+  # Enables and opens the SES Console if the SES Console's configured TRIGGER
+  # has been registered as triggered by the RMVX Ace Input module.
+  def update_ses_console
+    if Input.trigger?(SES::Console::TRIGGER)
+      SES::Console.enabled = true
+      SES::Console.open
     end
   end
+end if $TEST && SES::Win32::HWND::Console > 0
+# =============================================================================
+# Kernel
+# =============================================================================
+# Methods defined here are automatically available to all Ruby objects.
+module Kernel
+  # Provides a direct reference to the top-level binding, commonly known as
+  # "main". A reference to the main object itself could be used, but that has
+  # some unintended side effects.
+  def main() TOPLEVEL_BINDING end
 end
-# =============================================================================
-# Main
-# =============================================================================
-# Linking the Console constant in main to SES::Console. This allows you to use
-# the console from the top-level namespace with Console instead of the full
-# SES::Console.
-Console = SES::Console
-
-# Likewise, linking the Main constant to a reference to the top-level binding.
-# We could use a reference to main itself, but that has unintended side effects
-# (such as constants defined being available to all objects, not just main).
-Main = TOPLEVEL_BINDING
