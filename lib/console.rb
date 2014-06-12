@@ -212,8 +212,7 @@ module SES
     # Evaluates the content of the macro file referenced by the passed id.
     def self.macro(id)
       raise(LoadError.new("No macro '#{id}' found.")) unless @macros[id]
-      eval File.read(@macros[id])
-      #evaluate(File.read(@macros[id]), true)
+      evaluate(File.read(@macros[id]))
     end
     
     # Performs evaluation of the passed string. Evaluation may be performed
