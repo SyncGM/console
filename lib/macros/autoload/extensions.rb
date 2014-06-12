@@ -56,3 +56,8 @@ module Kernel
     raise(SystemExit) if SES::Console.enabled
   end
 end
+# =============================================================================
+# Main
+# =============================================================================
+# Link the Console constant to SES::Console.
+Console = SES::Console
