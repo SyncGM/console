@@ -14,8 +14,10 @@ module SES::Console::Macros
     # file name is an empty string.
     def self.append_file(file, contents)
       assign_last(file)
-      File.open(@last, 'a') { |f| f.write(contents) }
-      File.read(@last)
+      begin
+        File.open(@last, 'a') { |f| f.write(contents) }
+        File.read(@last)
+      rescue ; nil end
     end
   end
   
