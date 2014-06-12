@@ -1,6 +1,7 @@
 
-Console v1.1 by Solistra and Enelvon
+Console v1.2 by Solistra and Enelvon
 =============================================================================
+**TODO:** Update documentation for version 1.2.
 
 Summary
 -----------------------------------------------------------------------------
@@ -18,6 +19,9 @@ game, simply use the `exit` method provided by the `Kernel` module.
 (**NOTE:** If you are in the context of an object which has an alternative
 `exit` method defined -- such as `SceneManager` -- you will have to call the
 `Kernel.exit` method explicitly or raise a `SystemExit` exception.)
+
+  **NOTE:** You may also use the `exit!` method provided by `Kernel` to close
+the game immediately directly from the console.
 
   In order to evaluate multiple lines, use the `Console.multiline` method and
 `eval` its output like so:
@@ -40,7 +44,7 @@ current map, use the following:
 in the context of event 5 on the current map. You can also bind the console
 to the top-level Ruby execution context by passing the Main constant to the
 `Console.bind` method, which will evaluate code in Main. To rebind the
-console back to the `SES::Console` module, use the method `Console.rebind`.
+console back to the user-defined `CONTEXT`, use the method `Console.rebind`.
 
   In addition to this, the SES Console allows the use of external Ruby files
 known as 'macros.' These files must be stored in the configurable `MACRO_DIR`
@@ -79,9 +83,6 @@ method directly with a second argument of `true` to enable silent evaluation.
 Example (in a Script Call):
 
     Console.evaluate(%{puts 'Hi, there.'}, true)
-
-  **NOTE:** The `nil` return value of the `puts` method is suppressed... but
-keep in mind that this suppresses the display of exceptions, too.
 
 License
 -----------------------------------------------------------------------------
