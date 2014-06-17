@@ -1,7 +1,6 @@
 
 Console v1.2 by Solistra and Enelvon
 =============================================================================
-**TODO:** Update documentation for version 1.2.
 
 Summary
 -----------------------------------------------------------------------------
@@ -10,57 +9,80 @@ with support for user-defined macros (stored as external files), multiple
 lines of input, and the ability to step into and out of any Ruby object known
 at runtime. This is primarily a scripter's tool.
 
+  In addition to the core script, you may also download a zipped package of
+default external macros which provide a number of useful tasks and general
+enhancements to the basic SES Console. The latest macro package may be
+downloaded from GitHub -- the latest release of the SES Console should have a
+.zip archive attached to it which provides the entire macro package ready to
+be placed in your configured macro directory. The package may be found here:
+
+  * [SES Console Releases](https://github.com/sesvxace/console/releases)
+
+Please be sure to read the included README.md file included with the package
+for more information about what it offers.
+
 Advanced Usage
 -----------------------------------------------------------------------------
   In order to activate the console, press F5 (by default -- this is able to
 configured in the configuration area). By default, one line of code is
 evaluated at a time. To stop the interactive interpreter and return to the
 game, simply use the `exit` method provided by the `Kernel` module.
-(**NOTE:** If you are in the context of an object which has an alternative
+
+  **NOTE:** If you are in the context of an object which has an alternative
 `exit` method defined -- such as `SceneManager` -- you will have to call the
-`Kernel.exit` method explicitly or raise a `SystemExit` exception.)
+`Kernel.exit` method explicitly or raise a `SystemExit` exception.
 
   **NOTE:** You may also use the `exit!` method provided by `Kernel` to close
 the game immediately directly from the console.
 
-  In order to evaluate multiple lines, use the `Console.multiline` method and
-`eval` its output like so:
+  In order to evaluate multiple lines, use the `SES::Console.multiline`
+method and `eval` its output like so:
 
-    eval Console.multiline
+    eval SES::Console.multiline
 
-  **NOTE:** The `Console.multiline` method simply takes multiple lines of
-input and returns a string of the input -- it does not perform any evaluation
+  **NOTE:** The `SES::Console.multiline` method simply takes multiple lines
+of input and returns a string of the input -- it does not perform evaluation
 by itself. To end multiline input, simply enter the 'end of input' delimiter
 (`<<` by default, though this can be configured below).
 
   The SES Console also allows you to change the context of the interactive
 interpreter at any time by binding it to any present Ruby object with the
-`Console.bind` method. For example, to bind the interpreter to event 5 on the
-current map, use the following:
+`SES::Console.bind` method. For example, to bind the interpreter to event 5
+on the current map, use the following:
 
-    Console.bind($game_map.events[5])
+    SES::Console.bind($game_map.events[5])
 
   All code entered into the interpreter from that point on would be evaluated
 in the context of event 5 on the current map. You can also bind the console
-to the top-level Ruby execution context by passing the Main constant to the
-`Console.bind` method, which will evaluate code in Main. To rebind the
-console back to the user-defined `CONTEXT`, use the method `Console.rebind`.
+to the top-level Ruby execution context by passing `main` to the `bind`
+method, which will evaluate code in Main. To rebind the console back to the
+user-defined `CONTEXT`, use the method `SES::Console.rebind`.
+
+  **NOTE:** You can also temporarily bind or rebind the SES Console's context
+by passing a block to the `SES::Console.bind` and `SES::Console.rebind`
+methods like so:
+
+    self # => SES::Console
+    SES::Console.bind(main) do
+      # Evaluation inside the block now takes place within `main`.
+      self # => main
+    end
+    self # => SES::Console
 
   In addition to this, the SES Console allows the use of external Ruby files
 known as 'macros.' These files must be stored in the configurable `MACRO_DIR`
 directory in your project's root directory. Each macro must have a unique
-filename ending in the '.rb' file extension to be recognized by this script.
-Macros may also be placed in subdirectories for organization, but filenames
-*must* be unique. In order to execute an external macro, use the method
-`Console.macro` with a symbol corresponding to the base name of the external
-macro you wish to use. For example, to call the macro 'Files/read_file.rb',
-use the following:
+file name to be recognized by this script. Macros may also be placed in
+subdirectories for organization, but file names *must* be unique. In order to
+execute an external macro, use the method `SES::Console.macro` with a symbol
+corresponding to the base name of the external macro you wish to use. For
+example, to call the macro 'Files/read_file.rb', use the following:
 
-    Console.macro(:read_file)
+    SES::Console.macro(:read_file)
 
   **NOTE:** New macros added to the `MACRO_DIR` directory while the game is
 run in test mode will *not* be found automatically. If this occurs, you will
-have to rebuild the macro listing by calling the `Console.load_macros`
+have to rebuild the macro listing by calling the `SES::Console.load_macros`
 method. Once called, all detected macros will be added to the `@macros` hash.
 
   **NOTE:** Two macros have special functionality: 'setup' and 'teardown'.
@@ -75,14 +97,14 @@ will run the passed string as if it were entered as input by an interactive
 user and then end console processing. This can be done by entering code into
 an event's Script Call command like so:
 
-    Console.open(%{puts 'Hi, there.'})
+    SES::Console.open(%{puts 'Hi, there.'})
 
   You can also perform 'silent' evaluations (essentially, evaluation without
-the displayed return value) by passing a string to the `Console.evaluate`
-method directly with a second argument of `true` to enable silent evaluation.
+the displayed return value) by passing a string to `SES::Console.evaluate`
+directly with a second argument of `true` to enable silent evaluation.
 Example (in a Script Call):
 
-    Console.evaluate(%{puts 'Hi, there.'}, true)
+    SES::Console.evaluate(%{puts 'Hi, there.'}, true)
 
 License
 -----------------------------------------------------------------------------
