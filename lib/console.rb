@@ -15,7 +15,7 @@
 # downloaded from GitHub -- the latest release of the SES Console should have a
 # .zip archive attached to it which provides the entire macro package ready to
 # be placed in your configured macro directory. The package may be found here:
-#
+# 
 #   * [SES Console Releases](https://github.com/sesvxace/console/releases)
 # 
 # Please be sure to read the included README.md file included with the package
