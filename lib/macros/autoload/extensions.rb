@@ -13,10 +13,13 @@ class Object
   # Provides a sorted array of the instance methods defined on this object in
   # particular.
   def instance_methods
-    (methods - ::Object.methods).sort!
+    (methods - self.class.superclass.methods).sort!
   end
   
-  # Determines if the object is included in the given collection.
+  # Determines if the object is included in the given collection. Example:
+  # 
+  #     1.in?([1, 2, 3]) # => true
+  # 
   def in?(other)
     other.include?(self) rescue false
   end
@@ -39,6 +42,7 @@ module Enumerable
   # 
   # Example:
   #     [33, 50, 75].chain!(:to_f, ->(i) { i / 3 }, :round) # => [11, 17, 25]
+  # 
   def chain!(*list)
     return self if list.empty?
     map! do |item|
@@ -59,6 +63,7 @@ module Enumerable
   # 
   # Example:
   #     [1, 3, 5, 8, 10].find_first(&:even?) # => 8
+  # 
   def find_first
     each { |object| return object if yield object }
     nil
@@ -69,7 +74,10 @@ end
 # =============================================================================
 [String, Symbol].each do |base|
   # Provide the `~` unary operator for symbols and strings as a shortcut for
-  # running macro files in the SES Console.
+  # running macro files in the SES Console. Example:
+  # 
+  #     ~:read_file # Calls SES::Console.macro(:read_file)
+  # 
   base.send(:define_method, :~) { SES::Console.macro(self.to_sym) }
 end
 # =============================================================================
@@ -82,6 +90,7 @@ class String
   # 
   #     'SceneManager'.to_const # => SceneManager
   #     'Console'.to_const(SES) # => SES::Console
+  # 
   def to_const(base = Object)
     split('::').reduce(base) { |obj, const| obj.const_get(const) }
   rescue NameError
@@ -94,6 +103,7 @@ class String
   # Example:
   #     string = 'to_f'
   #     [1, 2, 3].map(&string) # => [1.0, 2.0, 3.0]
+  # 
   def to_proc
     to_sym.to_proc
   end
@@ -104,7 +114,7 @@ end
 # Methods defined here are automatically available to all Ruby objects.
 module Kernel
   # Delegators for the `bind`, `rebind`, `macro`, and `multiline` methods of
-  # the SES Console.
+  # the SES Console, allowing these methods to be used within any context.
   def bind(object, &block) SES::Console.bind(object, &block) end
   def rebind(&block)       SES::Console.rebind(&block)       end
   def macro(id)            SES::Console.macro(id)            end
