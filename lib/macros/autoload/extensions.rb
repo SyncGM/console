@@ -77,9 +77,11 @@ end
 # =============================================================================
 # Mutable representation of a string of characters.
 class String
-  # Attempts to convert the string into a fully resolved constant. Will
-  # recursively attempt to resolve the given argument if the argument is not
-  # a kind of `Class` or `Module`.
+  # Attempts to convert the string into a fully resolved constant. Returns
+  # `nil` if the constant could not be resolved. Examples:
+  # 
+  #     'SceneManager'.to_const # => SceneManager
+  #     'Console'.to_const(SES) # => SES::Console
   def to_const(base = Object)
     split('::').reduce(base) { |obj, const| obj.const_get(const) }
   rescue NameError
