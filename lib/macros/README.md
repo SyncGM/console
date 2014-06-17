@@ -1,4 +1,4 @@
-Console Macro Package
+SES Console: Macro Package
 ===============================================================================
 
 Summary
