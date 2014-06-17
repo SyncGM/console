@@ -81,7 +81,6 @@ class String
   # recursively attempt to resolve the given argument if the argument is not
   # a kind of `Class` or `Module`.
   def to_const(base = Object)
-    base = base.to_s.to_const unless [Class, Module].any? { |con| base == con }
     split('::').reduce(base) { |obj, const| obj.const_get(const) }
   rescue NameError
     nil
