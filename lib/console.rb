@@ -1,5 +1,5 @@
 #--
-# Console v1.2 by Solistra and Enelvon
+# Console v1.3 by Solistra and Enelvon
 # =============================================================================
 # 
 # Summary
@@ -119,24 +119,40 @@
 # not require the SES Core (v2.0), but it is recommended.
 # 
 #++
+
+# SES
+# =============================================================================
+# The top-level namespace for all SES scripts.
 module SES
-  # ===========================================================================
   # Win32
   # ===========================================================================
   # Contains references to Windows API functions.
   module Win32
-    BringWindowToTop = Win32API.new('user32',   'BringWindowToTop', 'I',  'I')
-    FindWindow       = Win32API.new('user32',   'FindWindow',       'PP', 'I')
-    GetConsoleTitle  = Win32API.new('kernel32', 'GetConsoleTitle',  'PI', 'I')
-    SetConsoleTitle  = Win32API.new('kernel32', 'SetConsoleTitle',  'P',  'I')
+    # Reference to the `BringWindowToTop` Windows API function.
+    BringWindowToTop = Win32API.new('user32', 'BringWindowToTop', 'I', 'I')
     
-    # Returns the title of the RGSS Console window.
+    # Reference to the `FindWindow` Windows API function.
+    FindWindow = Win32API.new('user32', 'FindWindow', 'PP', 'I')
+    
+    # Reference to the `GetConsoleTitle` Windows API function.
+    GetConsoleTitle = Win32API.new('kernel32', 'GetConsoleTitle', 'PI', 'I')
+    
+    # Reference to the `SetConsoleTitle` Windows API function.
+    SetConsoleTitle = Win32API.new('kernel32', 'SetConsoleTitle', 'P', 'I')
+    
+    # Obtains the title of the RGSS Console window.
+    # 
+    # @return [String] the title of the RGSS Console window
     def self.console_title
       GetConsoleTitle.call(buffer = "\0" * 256, buffer.length - 1)
       buffer.delete!("\0")
     end
     
     # Sets the title of the RGSS Console window to the passed title.
+    # 
+    # @param title [String, nil] the new console title; `nil` or `false` to
+    #   reset the title to its default value
+    # @return [String] the new console title
     def self.console_title=(title)
       SetConsoleTitle.call((title || 'RGSS Console').to_s)
     end
@@ -144,22 +160,26 @@ module SES
     # Brings the window referenced by the passed window handle to the top of
     # the Windows Z-order and focuses it. Returns true if the window was raised
     # successfully, false otherwise.
+    # 
+    # @param hwnd [FixNum] the window handle of the window to focus
+    # @return [Boolean] `true` if the window was focused, `false` otherwise
     def self.focus(hwnd = HWND::Game) BringWindowToTop.call(hwnd) != 0 end
     
-    # =========================================================================
     # HWND
     # =========================================================================
-    # Contains references to window handles used by the Windows API.
+    # Contains references to window handles used by the Windows API. Window
+    # handles are found with explicit names to ensure that the window handles
+    # are accurate for this game in particular.
     module HWND
-      # Window handles are found with explicit names to ensure that the window
-      # handles are accurate for this game in particular.
+      # The window handle for the RGSS Console window.
       Console = Win32::FindWindow.call(
         'ConsoleWindowClass', Win32.console_title)
+      
+      # The window handle for the RGSS Player window.
       Game    = Win32::FindWindow.call(
         'RGSS Player', load_data('Data/System.rvdata2').game_title)
     end
   end
-  # ===========================================================================
   # Console
   # ===========================================================================
   # Provides methods to facilitate an interactive Ruby console environment.
@@ -175,12 +195,12 @@ module SES
     # root directory.
     MACRO_DIR = 'System/Macros'
     
-    # The Input module constant to use for enabling the console. Constants that
-    # refer to the function keys are recommended ('Input::F5' - 'Input::F9').
+    # The `Input` module constant to use for enabling the console. Constants
+    # referring to function keys are recommended (`Input::F5` - `Input::F9`).
     TRIGGER = Input::F5
     
-    # The default evaluation context. Recommended values are either 'self' or
-    # 'TOPLEVEL_BINDING' (which will cause evaluation to occur in Main).
+    # The default evaluation context. Recommended values are either `self` or
+    # `TOPLEVEL_BINDING` (which will cause evaluation to occur in main).
     CONTEXT = self
     
     # Hash of prompt styles for different interpreter states.
@@ -196,22 +216,44 @@ module SES
     # =========================================================================
     @context = CONTEXT
     class << self
-      attr_accessor :enabled, :context
+      # Whether or not the Console is currently enabled.
+      # @return [Boolean]
+      attr_accessor :enabled
+      
+      # The current execution scope of the Console's REPL.
+      # @return [Object]
+      attr_accessor :context
+      
+      # Hash of prompt styles for the Console's REPL.
+      # @return [Hash{Symbol => String}]
       attr_reader   :prompt
     end
-
+    
     # Redefined method to allow constants to be evaluated within the current
     # context. Without this, they would be viewed as nil unless present in
-    # SES::Console.
+    # {SES::Console}.
+    # 
+    # @param sym [Symbol] symbol representing the missing constant
+    # @raise [NameError] if the constant genuinely does not exist
+    # @return [Constant] the resolved constant
     def self.const_missing(sym)
       @context == self ? super : @context.class.const_get(sym)
     rescue NameError => ex
       @context == self ? raise(ex) : @context.const_get(sym)
     end
     
-    # Macro definition from external .rb files in the Macros directory. Macros
-    # are stored as a hash where keys are the base names of .rb files converted
-    # to symbols and values are relative paths to macro files.
+    # Performs macro definition from external .rb files in the `MACRO_DIR`
+    # directory.
+    # 
+    # @note Macro files added while the SES Console is running will not be
+    #   detected automatically. You must explicitly call this method in order
+    #   to update the hash of known macro files.
+    # 
+    # @return [Hash{Symbol => String}] hash of macro file locations; keys are
+    #   base names of files converted to symbols, values are relative paths to
+    #   macro files
+    # 
+    # @see #macro
     def self.load_macros
       Dir.mkdir(MACRO_DIR) unless Dir.exist?(MACRO_DIR)
       @macros = Dir["#{MACRO_DIR}/**/*.*"].each_with_object({}) do |macro, hash|
@@ -225,20 +267,32 @@ module SES
       block_given? ? object.instance_exec(&block) : @context = object
     end
     
-    # Rebinds the SES Console's evaluation context to the value of CONTEXT. The
-    # context is only reset for the duration of the block if one is given.
+    # Rebinds the SES Console's evaluation context to the value of `CONTEXT`.
+    # The context is only reset for the duration of the block if one is given.
     def self.rebind(&block)
       block_given? ? CONTEXT.instance_exec(&block) : @context = CONTEXT
     end
     
     # Evaluates the content of the macro file referenced by the passed id.
+    # 
+    # @param id [Symbol] the macro ID to load
+    # @raise [LoadError] if no macro with the given ID exists
+    # @return [Object] the return value of the evaluated macro
+    # 
+    # @see #load_macros
     def self.macro(id)
       raise(LoadError.new("No macro '#{id}' found.")) unless @macros[id]
       evaluate(File.read(@macros[id]), true)
     end
     
     # Performs evaluation of the passed string. Evaluation may be performed
-    # silently by passing a 'true' value to the 'silent' parameter.
+    # silently by passing a `true` value to the `silent` parameter.
+    # 
+    # @note This method swallows all exceptions by design.
+    # 
+    # @param script [String] the script to evaluate
+    # @param silent [Boolean] whether or not to evaluate silently
+    # @return [Object] the return value of the passed script
     def self.evaluate(script = '', silent = false, &block)
       v = block ? @context.instance_exec(&block) : @context.send(:eval, script)
       unless silent
@@ -255,9 +309,12 @@ module SES
     end
     
     # Enables multiple lines of input. This method collects strings of user
-    # input until the input string matches the given end_of_input string (the
-    # :multi_end value of the @prompt hash by default) and returns the entirety
-    # of the collected input.
+    # input until the input string matches the given `end_of_input` string (the
+    # `:multi_end` value of the `@prompt` hash by default) and returns the
+    # entirety of the collected input.
+    # 
+    # @param end_of_input [String] the end-of-input delimiter to use
+    # @return [String] the collected input
     def self.multiline(end_of_input = @prompt[:multi_end])
       script = ''
       loop do
@@ -270,6 +327,10 @@ module SES
     
     # Opens the console for evaluation. Evaluation will continue until the
     # SES Console is disabled or the passed script is completed.
+    # 
+    # @param script [String, nil] the script to evaluate; `nil` to evaluate
+    #   user input
+    # @return [void]
     def self.open(script = nil, &block)
       load_macros unless @macros
       macro(:setup) if @macros[:setup]
@@ -285,7 +346,9 @@ module SES
     
     # Register this script with the SES Core if it exists.
     if SES.const_defined?(:Register)
-      Register.enter(Description = Script.new(:Console, 1.2))
+      # Script metadata.
+      Description = Script.new(:Console, 1.3)
+      Register.enter(Description)
     end
   end
 end
@@ -295,28 +358,42 @@ end
 # Superclass of all scenes within the game.
 class Scene_Base
   # Aliased to update the calling conditions for opening the SES Console.
-  alias :ses_console_sb_upd :update
+  # 
+  # @see #update
+  alias_method :ses_console_sb_upd, :update
+  
+  # Performs scene update logic.
+  # 
+  # @return [void]
   def update(*args, &block)
     update_ses_console
     ses_console_sb_upd(*args, &block)
   end
   
-  # Enables and opens the SES Console if the SES Console's configured TRIGGER
-  # has been registered as triggered by the RMVX Ace Input module.
+  # Enables and opens the SES Console if the SES Console's configured `TRIGGER`
+  # has been registered as triggered by the RMVX Ace `Input` module.
+  # 
+  # @return [void]
   def update_ses_console
     if Input.trigger?(SES::Console::TRIGGER)
       SES::Console.enabled = true
       SES::Console.open
     end
   end
-end if $TEST && SES::Win32::HWND::Console > 0
+end
 # =============================================================================
 # Kernel
 # =============================================================================
 # Methods defined here are automatically available to all Ruby objects.
 module Kernel
   # Provides a direct reference to the top-level binding, commonly known as
-  # "main". A reference to the main object itself could be used, but that has
-  # some unintended side effects.
-  def main() TOPLEVEL_BINDING end
+  # "main".
+  # 
+  # @note A reference to the main object itself could be used, but that has
+  #   some unintended side effects.
+  # 
+  # @return [Binding] the top-level binding
+  def main
+    TOPLEVEL_BINDING
+  end
 end
