@@ -215,20 +215,29 @@ module SES
     # =========================================================================
     # END CONFIGURATION
     # =========================================================================
-    @context = CONTEXT
+    
+    # Object
+    # =========================================================================
+    # The superclass of all Ruby objects except `BasicObject`.
+    class ::Object
+      public :binding
+    end
+    
     class << self
       # Whether or not the Console is currently enabled.
       # @return [Boolean]
       attr_accessor :enabled
       
       # The current execution scope of the Console's REPL.
-      # @return [Object]
+      # @return [Binding]
       attr_accessor :context
       
       # Hash of prompt styles for the Console's REPL.
       # @return [Hash{Symbol => String}]
-      attr_reader   :prompt
+      attr_reader :prompt
     end
+    
+    @context = CONTEXT.binding
     
     # Redefined method to allow constants to be evaluated within the current
     # context. Without this, they would be viewed as nil unless present in
@@ -257,8 +266,8 @@ module SES
     # @see .macro
     def self.load_macros
       Dir.mkdir(MACRO_DIR) unless Dir.exist?(MACRO_DIR)
-      @macros = Dir["#{MACRO_DIR}/**/*.*"].each_with_object({}) do |macro, hash|
-        hash[File.basename(macro, '.*').to_sym] = macro
+      @macros = Dir["#{MACRO_DIR}/**/*.*"].each_with_object({}) do |macro, h|
+        h[File.basename(macro, '.*').to_sym] = macro
       end
     end
     
@@ -267,7 +276,12 @@ module SES
     # 
     # @see .rebind
     def self.bind(object, &block)
-      block_given? ? object.instance_exec(&block) : @context = object
+      if block_given?
+        object.instance_exec(&block)
+      else
+        @context = object.binding
+        object
+      end
     end
     
     # Rebinds the SES Console's evaluation context to the value of `CONTEXT`.
@@ -275,7 +289,12 @@ module SES
     # 
     # @see .bind
     def self.rebind(&block)
-      block_given? ? CONTEXT.instance_exec(&block) : @context = CONTEXT
+      if block_given?
+        CONTEXT.instance_exec(&block)
+      else
+        @context = CONTEXT.binding
+        CONTEXT
+      end
     end
     
     # Evaluates the content of the macro file referenced by the passed id.
@@ -286,7 +305,7 @@ module SES
     # 
     # @see .load_macros
     def self.macro(id)
-      raise(LoadError.new("No macro '#{id}' found.")) unless @macros[id]
+      raise LoadError, "No macro '#{id}' found." unless @macros[id]
       evaluate(File.read(@macros[id]), true)
     end
     
@@ -299,7 +318,7 @@ module SES
     # @param silent [Boolean] whether or not to evaluate silently
     # @return [Object] the return value of the passed script
     def self.evaluate(script = '', silent = false, &block)
-      v = block ? @context.instance_exec(&block) : @context.send(:eval, script)
+      v = block ? @context.instance_exec(&block) : eval(script, @context)
       unless silent
         print(@prompt[:return], v == Kernel.main ? 'main' : v.inspect, "\n")
       end
