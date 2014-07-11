@@ -187,6 +187,7 @@ module SES
     # =========================================================================
     # BEGIN CONFIGURATION
     # =========================================================================
+    
     # The title of the console window.
     Win32.console_title =
       load_data('Data/System.rvdata2').game_title << ' Console'
@@ -253,7 +254,7 @@ module SES
     #   base names of files converted to symbols, values are relative paths to
     #   macro files
     # 
-    # @see #macro
+    # @see .macro
     def self.load_macros
       Dir.mkdir(MACRO_DIR) unless Dir.exist?(MACRO_DIR)
       @macros = Dir["#{MACRO_DIR}/**/*.*"].each_with_object({}) do |macro, hash|
@@ -263,12 +264,16 @@ module SES
     
     # Sets the evaluation context of the SES Console to the passed object. The
     # context is only set for the duration of the block if one is given.
+    # 
+    # @see .rebind
     def self.bind(object, &block)
       block_given? ? object.instance_exec(&block) : @context = object
     end
     
     # Rebinds the SES Console's evaluation context to the value of `CONTEXT`.
     # The context is only reset for the duration of the block if one is given.
+    # 
+    # @see .bind
     def self.rebind(&block)
       block_given? ? CONTEXT.instance_exec(&block) : @context = CONTEXT
     end
@@ -279,7 +284,7 @@ module SES
     # @raise [LoadError] if no macro with the given ID exists
     # @return [Object] the return value of the evaluated macro
     # 
-    # @see #load_macros
+    # @see .load_macros
     def self.macro(id)
       raise(LoadError.new("No macro '#{id}' found.")) unless @macros[id]
       evaluate(File.read(@macros[id]), true)
@@ -352,7 +357,6 @@ module SES
     end
   end
 end
-# =============================================================================
 # Scene_Base
 # =============================================================================
 # Superclass of all scenes within the game.
@@ -381,7 +385,6 @@ class Scene_Base
     end
   end
 end
-# =============================================================================
 # Kernel
 # =============================================================================
 # Methods defined here are automatically available to all Ruby objects.
