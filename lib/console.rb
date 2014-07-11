@@ -220,7 +220,12 @@ module SES
     # =========================================================================
     # The superclass of all Ruby objects except `BasicObject`.
     class ::Object
-      public :binding
+      # Provides the internal binding of this object publicly.
+      # 
+      # @return [Binding] the object's internal binding
+      def __binding__
+        binding
+      end
     end
     
     class << self
@@ -237,7 +242,7 @@ module SES
       attr_reader :prompt
     end
     
-    @context = CONTEXT.binding
+    @context = CONTEXT.__binding__
     
     # Redefined method to allow constants to be evaluated within the current
     # context. Without this, they would be viewed as nil unless present in
@@ -279,7 +284,7 @@ module SES
       if block_given?
         object.instance_exec(&block)
       else
-        @context = object.binding
+        @context = object.__binding__
         object
       end
     end
@@ -292,7 +297,7 @@ module SES
       if block_given?
         CONTEXT.instance_exec(&block)
       else
-        @context = CONTEXT.binding
+        @context = CONTEXT.__binding__
         CONTEXT
       end
     end
