@@ -313,23 +313,6 @@ module SES
       ex
     end
     
-    # Enables multiple lines of input. This method collects strings of user
-    # input until the input string matches the given `end_of_input` string (the
-    # `:multi_end` value of the `@prompt` hash by default) and returns the
-    # entirety of the collected input.
-    # 
-    # @param end_of_input [String] the end-of-input delimiter to use
-    # @return [String] the collected input
-    def self.multiline(end_of_input = @prompt[:multi_end])
-      script = ''
-      loop do
-        print(@prompt[:multiline])
-        break if (input = gets).chomp == end_of_input
-        script << input
-      end
-      script
-    end
-    
     # Opens the console for evaluation. Evaluation will continue until the
     # SES Console is disabled or the passed script is completed.
     # 
