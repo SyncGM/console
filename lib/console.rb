@@ -5,9 +5,9 @@
 # Summary
 # -----------------------------------------------------------------------------
 #   This script provides an interactive Ruby console through the RGSS Console
-# with support for user-defined macros (stored as external files), multiple
-# lines of input, and the ability to step into and out of any Ruby object known
-# at runtime. This is primarily a scripter's tool.
+# with support for user-defined macros (stored as external files) and the
+# ability to step into and out of any Ruby object known at runtime. This is
+# primarily a scripter's tool.
 # 
 #   In addition to the core script, you may also download a zipped package of
 # default external macros which provide a number of useful tasks and general
@@ -34,16 +34,6 @@
 # 
 #   **NOTE:** You may also use the `exit!` method provided by `Kernel` to close
 # the game immediately directly from the console.
-# 
-#   In order to evaluate multiple lines, use the `SES::Console.multiline`
-# method and `eval` its output like so:
-# 
-#     eval SES::Console.multiline
-# 
-#   **NOTE:** The `SES::Console.multiline` method simply takes multiple lines
-# of input and returns a string of the input -- it does not perform evaluation
-# by itself. To end multiline input, simply enter the 'end of input' delimiter
-# (`<<` by default, though this can be configured below).
 # 
 #   The SES Console also allows you to change the context of the interactive
 # interpreter at any time by binding it to any present Ruby object with the
@@ -90,21 +80,6 @@
 # method, and the 'teardown' macro is run whenever the opened console has been
 # exited. Use these macros for any code you want to be run whenever the console
 # is opened or exited by user or script input.
-# 
-#   As a final note, the console can also be used in a non-interactive mode by
-# opening the console and passing a string to be immediately evaluated. This
-# will run the passed string as if it were entered as input by an interactive
-# user and then end console processing. This can be done by entering code into
-# an event's Script Call command like so:
-# 
-#     SES::Console.open(%{puts 'Hi, there.'})
-# 
-#   You can also perform 'silent' evaluations (essentially, evaluation without
-# the displayed return value) by passing a string to `SES::Console.evaluate`
-# directly with a second argument of `true` to enable silent evaluation.
-# Example (in a Script Call):
-# 
-#     SES::Console.evaluate(%{puts 'Hi, there.'}, true)
 # 
 # License
 # -----------------------------------------------------------------------------
