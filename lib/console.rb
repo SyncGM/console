@@ -187,6 +187,7 @@ module SES
       :multi_end => '<<' ,
       :return    => '=> '
     }
+    
     # =========================================================================
     # END CONFIGURATION
     # =========================================================================
@@ -297,8 +298,8 @@ module SES
     # @param script [String] the script to evaluate
     # @param silent [Boolean] whether or not to evaluate silently
     # @return [Object] the return value of the passed script
-    def self.evaluate(script = '', silent = false, &block)
-      v = block ? @context.instance_exec(&block) : eval(script, @context)
+    def self.evaluate(script = '', silent = false, &blk)
+      v = blk ? @context.instance_exec(&blk) : eval('_ = ' << script, @context)
       unless silent
         print(@prompt[:return], v == Kernel.main ? 'main' : v.inspect, "\n")
       end
