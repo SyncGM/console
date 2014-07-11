@@ -79,7 +79,8 @@ module Enumerable
   # @example
   #   [33, 50, 75].chain!(:to_f, ->(i) { i / 3 }, :round) # => [11, 17, 25]
   # 
-  # @param list [Array<Symbol, #call] list of methods and Proc objects to chain
+  # @param list [Array<Symbol, #call>] list of method symbols and Proc objects
+  #   to chain
   # @return [Object] the result of the method chain
   # 
   # @see #chain
