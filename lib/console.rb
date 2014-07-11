@@ -247,7 +247,7 @@ module SES
     # @see .macro
     def self.load_macros
       Dir.mkdir(MACRO_DIR) unless Dir.exist?(MACRO_DIR)
-      @macros = Dir["#{MACRO_DIR}/**/*.*"].each_with_object({}) do |macro, h|
+      @macros = Dir["#{MACRO_DIR}/**/*.rb"].each_with_object({}) do |macro, h|
         h[File.basename(macro, '.*').to_sym] = macro
       end
     end
