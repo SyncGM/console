@@ -16,10 +16,17 @@ module SES::Console::Macros
       # The executable to use as the shell.
       # @return [String]
       attr_accessor :exe
+      
+      # The arguments to pass to the shell when called.
+      # @return [String]
+      attr_accessor :arguments
     end
     
     # Assign the Command Prompt as the default shell.
     @exe ||= 'cmd.exe'
+    
+    # Assign a custom prompt in the style of the SES Console.
+    @arguments ||= '/k prompt $p$_$$$G$s'
     
     # Opens the defined shell, executes the given input, then closes the shell.
     # The shell will remain open until exited if no input is explicitly given.
@@ -28,7 +35,7 @@ module SES::Console::Macros
     #   input
     # @return [Boolean] `true` if the shell exited cleanly, `false` otherwise
     def self.execute(input = nil)
-      system(input || @exe)
+      system(input || @exe + ' ' << @arguments)
     end
   end
 end
