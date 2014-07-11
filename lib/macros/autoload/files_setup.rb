@@ -3,18 +3,24 @@
 # =============================================================================
 #   Provides shared code for file macros.
 #++
+
+# Macros
+# =============================================================================
+# Top-level namespace for the default SES Console macro package.
 module SES::Console::Macros
-  # ===========================================================================
   # Files
   # ===========================================================================
   # Provides logic for macros which operate on files.
   module Files
     class << self
       # Default prompt for file operations.
+      # @return [String]
       attr_accessor :prompt
     end
     
     # Contains a reference to the last file operated on.
+    # 
+    # @return [String] the last file operated on
     def self.last
       @last ||= 'Unnamed.txt'
     end
@@ -24,7 +30,10 @@ module SES::Console::Macros
               "#{SES::Console::Macros.prompt}"
     
     # Assigns a reference to the last operated file to the @last instance
-    # variable if applicable. Returns the reference.
+    # variable if applicable.
+    # 
+    # @param files [Array<String>] a list of files to operate on
+    # @return [String] the last file operated on
     def self.assign_last(*files)
       file = files.reject { |file| file.empty? }.last
       @last = file unless file.nil?

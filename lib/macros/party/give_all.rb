@@ -3,14 +3,18 @@
 # =============================================================================
 #   Gives all items, weapons, and armors defined in the database to the party.
 #++
+
+# Macros
+# =============================================================================
+# Top-level namespace for the default SES Console macro package.
 module SES::Console::Macros
-  # ===========================================================================
   # Party
   # ===========================================================================
   # Provides logic for macros which affect the party.
   module Party
-    # Gives the maximum amount of gold and all items to the party. Returns an
-    # array of all items owned by the party after all additions are made.
+    # Gives the maximum amount of gold and all items to the party.
+    # 
+    # @return [Array<RPG::Item>] all items owned by the party
     def self.give_all
       gp = $game_party
       gp.gain_gold(gp.max_gold)

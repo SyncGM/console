@@ -4,14 +4,18 @@
 #   Takes all items, weapons, and armors defined in the database away from the
 # party.
 #++
+
+# Macros
+# =============================================================================
+# Top-level namespace for the default SES Console macro package.
 module SES::Console::Macros
-  # ===========================================================================
   # Party
   # ===========================================================================
   # Provides logic for macros which affect the party.
   module Party
-    # Removes all gold and items from the party. Returns an array of all items
-    # owned by the party after all subtraction is done.
+    # Removes all gold and items from the party.
+    # 
+    # @return [Array<RPG::Item>] all items owned by the party
     def self.take_all
       gp = $game_party
       gp.lose_gold(gp.max_gold)

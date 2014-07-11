@@ -5,10 +5,15 @@
 # game testing. Provides general initialization for the console and external
 # macros.
 #++
+
+# Macros
+# =============================================================================
+# Top-level namespace for the default SES Console macro package.
 module SES::Console::Macros
   # ===========================================================================
   # BEGIN CONFIGURATION
   # ===========================================================================
+  
   # Default prompt to use for user input during macro evaluation.
   SES::Console.prompt[:macro] = '?> '
   
@@ -19,11 +24,9 @@ module SES::Console::Macros
   # ===========================================================================
   # END CONFIGURATION
   # ===========================================================================
-  # Macros
-  # ===========================================================================
-  # Top-level namespace for the default SES Console macro package.
   class << self
     # Default prompt for user input during macro execution.
+    # @return [String]
     attr_reader :prompt
   end
   
@@ -31,19 +34,27 @@ module SES::Console::Macros
   @prompt ||= SES::Console.prompt[:macro]
   
   # Customized writer for the user input prompt. Automatically updates the
-  # prompt in both the `SES::Macros` and `SES::Console` modules.
+  # prompt in both the `SES::Console::Macros` and `SES::Console` modules.
+  # 
+  # @param value [String] the desired prompt
+  # @return [String] the assigned prompt
   def prompt=(value)
     SES::Console.prompt[:macro] = value.to_s
     @prompt = SES::Console.prompt[:macro]
   end
-  # ===========================================================================
   # Setup
   # ===========================================================================
   # Provides the welcome message and logic determining its display.
   module Setup
     class << self
-      attr_accessor :message, :run
-      alias :run? :run
+      # The welcome message to display when this macro is first run.
+      # @return [String]
+      attr_accessor :message
+      
+      # Whether or not the setup macro has been run.
+      # @return [Boolean]
+      attr_accessor :run
+      alias_method :run?, :run
     end
     
     # The default message to display when the SES Console is opened for the
@@ -52,6 +63,9 @@ module SES::Console::Macros
                'Type `exit` or `Kernel.exit` to return to the game.'
     
     # Writes the given message (`@message` by default) to standard output.
+    # 
+    # @param message [String] the message to write
+    # @return [nil]
     def self.display_message(message = @message)
       STDOUT.puts(message)
     end
