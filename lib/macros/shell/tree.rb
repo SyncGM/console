@@ -10,5 +10,6 @@
 # Top-level namespace for the default SES Console macro package.
 module SES::Console::Macros
   # Execute the macro.
-  Shell.execute('tree /F')
+  print(@prompt)
+  Shell.execute('tree /F' << gets.chomp!)
 end
