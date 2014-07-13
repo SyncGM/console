@@ -11,5 +11,5 @@
 module SES::Console::Macros
   # Execute the macro.
   print(@prompt)
-  Shell.execute('tree /F' << gets.chomp!)
+  Shell.execute('tree /F ' << gets.chomp!)
 end
