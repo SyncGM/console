@@ -300,9 +300,8 @@ module SES
     # @return [Object] the return value of the passed script
     def self.evaluate(script = '', silent = false, &blk)
       v = blk ? @context.instance_exec(&blk) : eval('_ = ' << script, @context)
-      unless silent
-        print(@prompt[:return], v == Kernel.main ? 'main' : v.inspect, "\n")
-      end
+      print(@prompt[:return], v == TOPLEVEL_BINDING ? 'main' : v.inspect, 
+        "\n") unless silent
       v
     rescue SystemExit
       @enabled = false
@@ -322,7 +321,6 @@ module SES
     def self.open(script = nil, &block)
       load_macros unless @macros
       macro(:setup) if @macros[:setup]
-      warn('** WARNING: Block given, script ignored. **') if block && script
       Win32.focus(Win32::HWND::Console) unless script || block_given?
       begin
         print(@prompt[:input]) unless script || block_given?
@@ -366,20 +364,5 @@ class Scene_Base
       SES::Console.enabled = true
       SES::Console.open
     end
-  end
-end
-# Kernel
-# =============================================================================
-# Methods defined here are automatically available to all Ruby objects.
-module Kernel
-  # Provides a direct reference to the top-level binding, commonly known as
-  # "main".
-  # 
-  # @note A reference to the main object itself could be used, but that has
-  #   some unintended side effects.
-  # 
-  # @return [Binding] the top-level binding
-  def main
-    TOPLEVEL_BINDING
   end
 end
