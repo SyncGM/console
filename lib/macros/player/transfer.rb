@@ -1,7 +1,7 @@
 #--
 # SES Console: Transfer
 # =============================================================================
-#   Transfers the player to the given map name or ID.
+#   Transfers the player to the given map ID.
 #++
 
 # Macros
@@ -27,5 +27,5 @@ module SES::Console::Macros
   
   # Execute the macro.
   print('Map ID, X, Y ' << @prompt)
-  Player.transfer(*gets.chomp!.split(/,\W+/).map(&:to_i))
+  Player.transfer(*gets.chomp!.split(/,\W+/).map!(&:to_i))
 end
