@@ -66,6 +66,17 @@ class Object
   def itself
     self
   end
+  
+  # Converts a given instance, Class, or Module directly into the appropriate
+  # constant value.
+  # 
+  # @example
+  #   $game_player.to_const # => Game_Player
+  # 
+  # @return [Class, Module] the appropriate constant
+  def to_const
+    [Module, Class].any? { |base| self.class == base } ? self : self.class
+  end
 end
 # Enumerable
 # =============================================================================
@@ -146,6 +157,17 @@ end
 # =============================================================================
 # Methods defined here are automatically available to all Ruby objects.
 module Kernel
+  # Provides a direct reference to the top-level binding, commonly known as
+  # "main".
+  # 
+  # @note A reference to the main object itself could be used, but that has
+  #   some unintended side effects.
+  # 
+  # @return [Binding] the top-level binding
+  def main
+    TOPLEVEL_BINDING
+  end
+  
   # Delegator for the {SES::Console.bind} method.
   # @see SES::Console.bind
   def bind(object, &block)
