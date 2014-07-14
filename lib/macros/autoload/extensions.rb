@@ -132,13 +132,11 @@ class String
   #   'SceneManager'.to_const # => SceneManager
   #   'Console'.to_const(SES) # => SES::Console
   # 
-  # @param base [Constant] the base constant to begin resolution with
-  # @return [Constant, nil] the fully resolved constant if found, `nil`
-  #   otherwise
+  # @param base [Object] the base constant to begin resolution with
+  # @raise [NameError] if the constant could not be resolved
+  # @return [Object] the fully resolved constant
   def to_const(base = Object)
     split('::').reduce(base) { |obj, const| obj.const_get(const) }
-  rescue NameError
-    nil
   end
   
   # Converts the string into a Proc by first converting it to a Symbol and
@@ -204,5 +202,7 @@ module Kernel
 end
 # Main
 # =============================================================================
-# Link to SES::Console.
+# The top-level execution context.
+
+# Link to the SES Console.
 Console = SES::Console

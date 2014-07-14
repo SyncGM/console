@@ -22,11 +22,11 @@ module SES::Console::Macros
     # Provides a prompt specifically for file-based operations.
     # 
     # @return [String] the file prompt
-    def prompt
+    def self.prompt
       "File name (blank for #{Files.last}) #{SES::Console::Macros.prompt}"
     end
     
-    # Assigns a reference to the last operated file to the @last instance
+    # Assigns a reference to the last file operated on to the `@last` instance
     # variable if applicable.
     # 
     # @param files [Array<String>] a list of files to operate on
