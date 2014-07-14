@@ -138,7 +138,9 @@ module SES
     # 
     # @param hwnd [FixNum] the window handle of the window to focus
     # @return [Boolean] `true` if the window was focused, `false` otherwise
-    def self.focus(hwnd = HWND::Game) BringWindowToTop.call(hwnd) != 0 end
+    def self.focus(hwnd = HWND::Game)
+      BringWindowToTop.call(hwnd) != 0
+    end
     
     # HWND
     # =========================================================================
@@ -151,7 +153,7 @@ module SES
         'ConsoleWindowClass', Win32.console_title)
       
       # The window handle for the RGSS Player window.
-      Game    = Win32::FindWindow.call(
+      Game = Win32::FindWindow.call(
         'RGSS Player', load_data('Data/System.rvdata2').game_title)
     end
   end
