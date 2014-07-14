@@ -1,7 +1,7 @@
 #--
 # SES Console: Restore Events
 # =============================================================================
-#   Restores all killed events to the current map.
+#   Restores all events on the current map.
 #++
 
 # Macros
@@ -13,9 +13,6 @@ module SES::Console::Macros
   # Provides macros which perform various utility operations.
   module Utility
     # Restores all of the events on the current map.
-    # 
-    # @note This method may be called when the scene is not an instance of
-    #   `Scene_Map` and will still perform the appropriate action.
     # 
     # @return [Hash{FixNum => Game_Event}] hash of events on the current map
     def self.restore_events
