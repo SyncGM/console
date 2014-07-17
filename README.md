@@ -24,7 +24,7 @@ for more information about what it offers.
 Advanced Usage
 -----------------------------------------------------------------------------
   In order to activate the console, press F5 (by default -- this is able to
-configured in the configuration area). By default, one line of code is
+be configured in the configuration area). By default, one line of code is
 evaluated at a time. To stop the interactive interpreter and return to the
 game, simply use the `exit` method provided by the `Kernel` module.
 
