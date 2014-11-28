@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII" />
+<title>
+  File: README
+  
+    &mdash; SES Console Documentation
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!file.README.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><div id='filecontents'><h1>Console v1.3 by Solistra and Enelvon</h1>
+
+<h2>Summary</h2>
+
+<p>This script provides an interactive Ruby console through the RGSS Console
+with support for user-defined macros (stored as external files) and the
+ability to step into and out of any Ruby object known at runtime. This is
+primarily a scripter&#39;s tool.</p>
+
+<p>In addition to the core script, you may also download a zipped package of
+default external macros which provide a number of useful tasks and general
+enhancements to the basic SES Console. The latest macro package may be
+downloaded from GitHub -- the latest release of the SES Console should have a
+.zip archive attached to it which provides the entire macro package ready to
+be placed in your configured macro directory. The package may be found here:</p>
+
+<ul>
+<li><a href="https://github.com/sesvxace/console/releases">SES Console Releases</a></li>
+</ul>
+
+<p>Please be sure to read the included README.md file included with the package
+for more information about what it offers.</p>
+
+<h2>Advanced Usage</h2>
+
+<p>In order to activate the console, press F5 (by default -- this is able to
+be configured in the configuration area). By default, one line of code is
+evaluated at a time. To stop the interactive interpreter and return to the
+game, simply use the <code>exit</code> method provided by the <code>Kernel</code> module.</p>
+
+<p><strong>NOTE:</strong> If you are in the context of an object which has an alternative
+<code>exit</code> method defined -- such as <code>SceneManager</code> -- you will have to call the
+<code>Kernel.exit</code> method explicitly or raise a <code>SystemExit</code> exception.</p>
+
+<p><strong>NOTE:</strong> You may also use the <code>exit!</code> method provided by <code>Kernel</code> to close
+the game immediately directly from the console.</p>
+
+<p>The SES Console also allows you to change the context of the interactive
+interpreter at any time by binding it to any present Ruby object with the
+<code>SES::Console.bind</code> method. For example, to bind the interpreter to event 5
+on the current map, use the following:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_bind'>bind</span><span class='lparen'>(</span><span class='gvar'>$game_map</span><span class='period'>.</span><span class='id identifier rubyid_events'>events</span><span class='lbracket'>[</span><span class='int'>5</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+</code></pre>
+
+<p>All code entered into the interpreter from that point on would be evaluated
+in the context of event 5 on the current map. You can also bind the console
+to the top-level Ruby execution context by passing <code>main</code> to the <code>bind</code>
+method, which will evaluate code in Main. To rebind the console back to the
+user-defined <code>CONTEXT</code>, use the method <code>SES::Console.rebind</code>.</p>
+
+<p><strong>NOTE:</strong> You can also temporarily bind or rebind the SES Console&#39;s context
+by passing a block to the <code>SES::Console.bind</code> and <code>SES::Console.rebind</code>
+methods like so:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='kw'>self</span> <span class='comment'># =&gt; SES::Console
+</span><span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_bind'>bind</span><span class='lparen'>(</span><span class='id identifier rubyid_main'>main</span><span class='rparen'>)</span> <span class='kw'>do</span>
+  <span class='comment'># Evaluation inside the block now takes place within `main`.
+</span>  <span class='kw'>self</span> <span class='comment'># =&gt; main
+</span><span class='kw'>end</span>
+<span class='kw'>self</span> <span class='comment'># =&gt; SES::Console
+</span></code></pre>
+
+<p>In addition to this, the SES Console allows the use of external Ruby files
+known as &#39;macros.&#39; These files must be stored in the configurable <code>MACRO_DIR</code>
+directory in your project&#39;s root directory. Each macro must have a unique
+file name to be recognized by this script. Macros may also be placed in
+subdirectories for organization, but file names <em>must</em> be unique. In order to
+execute an external macro, use the method <code>SES::Console.macro</code> with a symbol
+corresponding to the base name of the external macro you wish to use. For
+example, to call the macro &#39;Files/read_file.rb&#39;, use the following:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_macro'>macro</span><span class='lparen'>(</span><span class='symbol'>:read_file</span><span class='rparen'>)</span>
+</code></pre>
+
+<p><strong>NOTE:</strong> New macros added to the <code>MACRO_DIR</code> directory while the game is
+run in test mode will <em>not</em> be found automatically. If this occurs, you will
+have to rebuild the macro listing by calling the <code>SES::Console.load_macros</code>
+method. Once called, all detected macros will be added to the <code>@macros</code> hash.</p>
+
+<p><strong>NOTE:</strong> Two macros have special functionality: &#39;setup&#39; and &#39;teardown&#39;.
+The &#39;setup&#39; macro is run whenever the SES Console is opened via its <code>open</code>
+method, and the &#39;teardown&#39; macro is run whenever the opened console has been
+exited. Use these macros for any code you want to be run whenever the console
+is opened or exited by user or script input.</p>
+
+<h2>License</h2>
+
+<p>This script is made available under the terms of the MIT Expat license.
+View <a href="http://sesvxace.wordpress.com/license/">this page</a> for more detailed
+information.</p>
+
+<h2>Installation</h2>
+
+<p>Place this script below the SES Core (v2.0) script (if you are using it) or
+the Materials header, but above all other custom scripts. This script does
+not require the SES Core (v2.0), but it is recommended.</p>
+</div></div>
+
+    <div id="footer">
+  Generated on Fri Nov 28 15:01:16 2014 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.6 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>

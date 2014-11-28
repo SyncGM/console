@@ -1,0 +1,318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Module: SES::Console::Macros::Party
+  
+    &mdash; SES Console Documentation
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../../../';
+  framesUrl = "../../../frames.html#!SES/Console/Macros/Party.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../../../_index.html">Index (P)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../SES.html" title="SES (module)">SES</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Console.html" title="SES::Console (module)">Console</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Macros.html" title="SES::Console::Macros (module)">Macros</a></span></span>
+     &raquo; 
+    <span class="title">Party</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../../../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../../../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Module: SES::Console::Macros::Party
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">lib/macros/party/take_all.rb<span class="defines">,<br />
+  lib/macros/party/give_all.rb</span>
+</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <h1>Party</h1>
+
+<p>Provides logic for macros which affect the party.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#give_all-class_method" title="give_all (class method)">+ (Array&lt;RPG::Item&gt;) <strong>give_all</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Gives the maximum amount of gold and all items to the party.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#take_all-class_method" title="take_all (class method)">+ (Array&lt;RPG::Item&gt;) <strong>take_all</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Removes all gold and items from the party.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="give_all-class_method">
+  
+    + (<tt>Array&lt;RPG::Item&gt;</tt>) <strong>give_all</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Gives the maximum amount of gold and all items to the party.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;RPG::Item&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>all items owned by the party</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+18
+19
+20
+21
+22
+23
+24
+25</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/macros/party/give_all.rb', line 18</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_give_all'>give_all</span>
+  <span class='id identifier rubyid_gp'>gp</span> <span class='op'>=</span> <span class='gvar'>$game_party</span>
+  <span class='id identifier rubyid_gp'>gp</span><span class='period'>.</span><span class='id identifier rubyid_gain_gold'>gain_gold</span><span class='lparen'>(</span><span class='id identifier rubyid_gp'>gp</span><span class='period'>.</span><span class='id identifier rubyid_max_gold'>max_gold</span><span class='rparen'>)</span>
+  <span class='lbracket'>[</span><span class='gvar'>$data_armors</span><span class='comma'>,</span> <span class='gvar'>$data_items</span><span class='comma'>,</span> <span class='gvar'>$data_weapons</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_data'>data</span><span class='op'>|</span>
+    <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_item'>item</span><span class='op'>|</span> <span class='id identifier rubyid_gp'>gp</span><span class='period'>.</span><span class='id identifier rubyid_gain_item'>gain_item</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_gp'>gp</span><span class='period'>.</span><span class='id identifier rubyid_max_item_number'>max_item_number</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_gp'>gp</span><span class='period'>.</span><span class='id identifier rubyid_all_items'>all_items</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="take_all-class_method">
+  
+    + (<tt>Array&lt;RPG::Item&gt;</tt>) <strong>take_all</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Removes all gold and items from the party.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;RPG::Item&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>all items owned by the party</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/macros/party/take_all.rb', line 19</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_take_all'>take_all</span>
+  <span class='id identifier rubyid_gp'>gp</span> <span class='op'>=</span> <span class='gvar'>$game_party</span>
+  <span class='id identifier rubyid_gp'>gp</span><span class='period'>.</span><span class='id identifier rubyid_lose_gold'>lose_gold</span><span class='lparen'>(</span><span class='id identifier rubyid_gp'>gp</span><span class='period'>.</span><span class='id identifier rubyid_max_gold'>max_gold</span><span class='rparen'>)</span>
+  <span class='comment'># We're not using `init_all_items` here due to that method being designed
+</span>  <span class='comment'># for item initialization, not subtraction -- as such, it is expected to
+</span>  <span class='comment'># be redefined in some projects.
+</span>  <span class='id identifier rubyid_gp'>gp</span><span class='period'>.</span><span class='id identifier rubyid_all_items'>all_items</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_i'>i</span><span class='op'>|</span> <span class='id identifier rubyid_gp'>gp</span><span class='period'>.</span><span class='id identifier rubyid_lose_item'>lose_item</span><span class='lparen'>(</span><span class='id identifier rubyid_i'>i</span><span class='comma'>,</span> <span class='id identifier rubyid_gp'>gp</span><span class='period'>.</span><span class='id identifier rubyid_max_item_number'>max_item_number</span><span class='lparen'>(</span><span class='id identifier rubyid_i'>i</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_gp'>gp</span><span class='period'>.</span><span class='id identifier rubyid_all_items'>all_items</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Fri Nov 28 15:01:17 2014 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.6 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>
