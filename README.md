@@ -1,5 +1,5 @@
 
-Console v1.3 by Solistra and Enelvon
+Console v1.4 by Solistra and Enelvon
 =============================================================================
 
 Summary
@@ -44,16 +44,33 @@ on the current map, use the following:
 
   All code entered into the interpreter from that point on would be evaluated
 in the context of event 5 on the current map. You can also bind the console
-to the top-level Ruby execution context by passing `main` to the `bind`
-method, which will evaluate code in Main. To rebind the console back to the
-user-defined `CONTEXT`, use the method `SES::Console.rebind`.
+to the top-level Ruby execution context by passing `TOPLEVEL_BINDING` to the
+`bind` method, which will evaluate code in `main`. To rebind the console back
+to the user-defined `CONTEXT`, use the method `SES::Console.reset_binding`.
 
-  **NOTE:** You can also temporarily bind or rebind the SES Console's context
-by passing a block to the `SES::Console.bind` and `SES::Console.rebind`
-methods like so:
+  Note that changing the evaluation context via `SES::Console.bind` pushes
+the object being bound to onto an object stack; this stack can also be
+reversed with the `SES::Console.rebind` method, allowing you to quickly
+navigate multiple evaluation contexts:
 
     self # => SES::Console
-    SES::Console.bind(main) do
+    SES::Console.bind(DataManager)
+    self # => DataManager
+    SES::Console.rebind
+    self # => SES::Console
+
+  Calling `SES::Console.reset_binding` both resets the evaluation context to
+the default context and clears the object stack.
+
+    SES::Console.reset_binding
+    SES::Console.stack # => []
+
+  **NOTE:** You can also temporarily bind or rebind the SES Console's context
+by passing a block to the `SES::Console.bind`, `SES::Console.rebind`, and
+`SES::Console.reset_binding` methods like so:
+
+    self # => SES::Console
+    SES::Console.bind(TOPLEVEL_BINDING) do
       # Evaluation inside the block now takes place within `main`.
       self # => main
     end
@@ -75,11 +92,11 @@ run in test mode will *not* be found automatically. If this occurs, you will
 have to rebuild the macro listing by calling the `SES::Console.load_macros`
 method. Once called, all detected macros will be added to the `@macros` hash.
 
-  **NOTE:** Two macros have special functionality: 'setup' and 'teardown'.
-The 'setup' macro is run whenever the SES Console is opened via its `open`
-method, and the 'teardown' macro is run whenever the opened console has been
-exited. Use these macros for any code you want to be run whenever the console
-is opened or exited by user or script input.
+  **NOTE:** By default, two macros have special functionality: 'setup' and
+'teardown'. The 'setup' macro is run whenever the SES Console is opened via
+its `open` method, and the 'teardown' macro is run whenever the opened
+console has been closed. Use these macros for any code you want to be run
+whenever the console is opened or closed by user or script input.
 
 License
 -----------------------------------------------------------------------------
@@ -89,7 +106,7 @@ information.
 
 Installation
 -----------------------------------------------------------------------------
-  Place this script below the SES Core (v2.0) script (if you are using it) or
-the Materials header, but above all other custom scripts. This script does
-not require the SES Core (v2.0), but it is recommended.
+  Place this script below the SES Core (v2.0 or higher) script (if you are
+using it) or the Materials header, but above all other custom scripts. This
+script does not require the SES Core, but it is highly recommended.
 
