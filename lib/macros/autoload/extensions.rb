@@ -178,6 +178,12 @@ module Kernel
     SES::Console.rebind(&block)
   end
   
+  # Delegator for the {SES::Console.reset_binding} method.
+  # @see SES::Console.reset_binding
+  def reset_binding(&block)
+	SES::Console.reset_binding(&block)
+  end
+  
   # Delegator for the {SES::Console.macro} method.
   # @see SES::Console.macro
   def macro(id)

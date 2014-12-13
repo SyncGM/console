@@ -1,5 +1,5 @@
 #--
-# Console v1.3 by Solistra and Enelvon
+# Console v1.4 by Solistra and Enelvon
 # =============================================================================
 # 
 # Summary
@@ -44,16 +44,33 @@
 # 
 #   All code entered into the interpreter from that point on would be evaluated
 # in the context of event 5 on the current map. You can also bind the console
-# to the top-level Ruby execution context by passing `main` to the `bind`
-# method, which will evaluate code in Main. To rebind the console back to the
-# user-defined `CONTEXT`, use the method `SES::Console.rebind`.
+# to the top-level Ruby execution context by passing `TOPLEVEL_BINDING` to the
+# `bind` method, which will evaluate code in `main`. To rebind the console back
+# to the user-defined `CONTEXT`, use the method `SES::Console.reset_binding`.
 # 
-#   **NOTE:** You can also temporarily bind or rebind the SES Console's context
-# by passing a block to the `SES::Console.bind` and `SES::Console.rebind`
-# methods like so:
+#   Note that changing the evaluation context via `SES::Console.bind` pushes
+# the object being bound to onto an object stack; this stack can also be
+# reversed with the `SES::Console.rebind` method, allowing you to quickly
+# navigate multiple evaluation contexts:
 # 
 #     self # => SES::Console
-#     SES::Console.bind(main) do
+#     SES::Console.bind(DataManager)
+#     self # => DataManager
+#     SES::Console.rebind
+#     self # => SES::Console
+# 
+#   Calling `SES::Console.reset_binding` both resets the evaluation context to
+# the default context and clears the object stack.
+# 
+#     SES::Console.reset_binding
+#     SES::Console.stack # => []
+# 
+#   **NOTE:** You can also temporarily bind or rebind the SES Console's context
+# by passing a block to the `SES::Console.bind`, `SES::Console.rebind`, and
+# `SES::Console.reset_binding` methods like so:
+# 
+#     self # => SES::Console
+#     SES::Console.bind(TOPLEVEL_BINDING) do
 #       # Evaluation inside the block now takes place within `main`.
 #       self # => main
 #     end
@@ -75,11 +92,11 @@
 # have to rebuild the macro listing by calling the `SES::Console.load_macros`
 # method. Once called, all detected macros will be added to the `@macros` hash.
 # 
-#   **NOTE:** Two macros have special functionality: 'setup' and 'teardown'.
-# The 'setup' macro is run whenever the SES Console is opened via its `open`
-# method, and the 'teardown' macro is run whenever the opened console has been
-# exited. Use these macros for any code you want to be run whenever the console
-# is opened or exited by user or script input.
+#   **NOTE:** By default, two macros have special functionality: 'setup' and
+# 'teardown'. The 'setup' macro is run whenever the SES Console is opened via
+# its `open` method, and the 'teardown' macro is run whenever the opened
+# console has been closed. Use these macros for any code you want to be run
+# whenever the console is opened or closed by user or script input.
 # 
 # License
 # -----------------------------------------------------------------------------
@@ -89,9 +106,9 @@
 # 
 # Installation
 # -----------------------------------------------------------------------------
-#   Place this script below the SES Core (v2.0) script (if you are using it) or
-# the Materials header, but above all other custom scripts. This script does
-# not require the SES Core (v2.0), but it is recommended.
+#   Place this script below the SES Core (v2.0 or higher) script (if you are
+# using it) or the Materials header, but above all other custom scripts. This
+# script does not require the SES Core, but it is highly recommended.
 # 
 #++
 
@@ -178,16 +195,39 @@ module SES
     TRIGGER = Input::F5
     
     # The default evaluation context. Recommended values are either `self` or
-    # `TOPLEVEL_BINDING` (which will cause evaluation to occur in main).
-    CONTEXT = self
+    # `TOPLEVEL_BINDING` (which will cause evaluation to occur in `main`).
+    CONTEXT = TOPLEVEL_BINDING
     
-    # Hash of prompt styles for different interpreter states.
+    # Hash of prompt styles for different interpreter states. These values are
+    # used to create various prompts via `sprintf`.
     @prompt = {
-      :error     => '!> ',
-      :input     => '>> ',
-      :multiline => '^  ',
-      :multi_end => '<<' ,
-      :return    => '=> '
+      error:  '!> %s',
+      input:  '>> %s: ',
+      return: '=> %s'
+    }
+    
+    # Hooks defined for use by the console; the defaults are recommended.
+    @hooks = {
+      pre_eval: ->(script, options) {},
+      post_eval: ->(value, options) do
+          puts @prompt[:return] % value.inspect unless options[:silent]
+        end,
+      eval_error: ->(error, options) do
+          STDERR.puts @prompt[:error] % "#{error.class}: #{error.message}"
+        end,
+      on_open: ->(script) do
+          macro(:setup) if @macros[:setup]
+          Win32.focus(Win32::HWND::Console) unless script
+        end,
+      on_input: ->(script) do
+          print @prompt[:input] % @context.eval('simple_inspect')
+          puts script if script
+        end,
+      on_close: ->(script) do
+          macro(:teardown) if @macros[:teardown]
+          sleep(0.1) # Prevent input from unintentionally passing to the game.
+          Win32.focus(Win32::HWND::Game) unless script
+        end
     }
     
     # =========================================================================
@@ -207,33 +247,37 @@ module SES
     end
     
     class << self
-      # Whether or not the Console is currently enabled.
+      # Whether or not the REPL is currently enabled.
       # @return [Boolean]
       attr_accessor :enabled
       
-      # The current execution scope of the Console's REPL.
+      # The current execution scope of the console's REPL.
       # @return [Binding]
       attr_accessor :context
       
-      # Hash of prompt styles for the Console's REPL.
+      # Hash of hooks used by the console.
+      # @return [Hash{Symbol => Proc}]
+      attr_reader :hooks
+      
+      # Hash of macro files recognized by the console.
+      # @return [Hash{Symbol => String}]
+      attr_reader :macros
+      
+      # Hash of prompt styles for the console's REPL.
       # @return [Hash{Symbol => String}]
       attr_reader :prompt
+      
+      # Array of objects passed to the `SES::Console.bind` method.
+      # @return [Array<Object>]
+      attr_reader :stack
     end
     
+    # Explicitly define the initial context for the Console to the binding of
+    # the default `CONTEXT`.
     @context = CONTEXT.__binding__
     
-    # Redefined method to allow constants to be evaluated within the current
-    # context. Without this, they would be viewed as nil unless present in
-    # {SES::Console}.
-    # 
-    # @param sym [Symbol] symbol representing the missing constant
-    # @raise [NameError] if the constant genuinely does not exist
-    # @return [Constant] the resolved constant
-    def self.const_missing(sym)
-      @context == self ? super : @context.class.const_get(sym)
-    rescue NameError => ex
-      @context == self ? raise(ex) : @context.const_get(sym)
-    end
+    # Initialize the binding stack.
+    @stack = []
     
     # Performs macro definition from external .rb files in the `MACRO_DIR`
     # directory.
@@ -248,7 +292,6 @@ module SES
     # 
     # @see .macro
     def self.load_macros
-      Dir.mkdir(MACRO_DIR) unless Dir.exist?(MACRO_DIR)
       @macros = Dir["#{MACRO_DIR}/**/*.rb"].each_with_object({}) do |macro, h|
         h[File.basename(macro, '.*').to_sym] = macro
       end
@@ -258,29 +301,49 @@ module SES
     # context is only set for the duration of the block if one is given.
     # 
     # @see .rebind
+    # @see .reset_binding
+    # @return [Binding] the new evaluation context
     def self.bind(object, &block)
       if block_given?
         object.instance_exec(&block)
       else
+        previous = @context.eval('self')
+        @stack.push(previous) unless @stack.last == object
         @context = object.__binding__
-        object
       end
     end
     
-    # Rebinds the SES Console's evaluation context to the value of `CONTEXT`.
-    # The context is only reset for the duration of the block if one is given.
+    # Rebinds the SES Console's evaluation context to the previously bound
+    # context. The context is only rebound for the duration of the block if one
+    # is given.
     # 
     # @see .bind
+    # @return [Binding] the rebound evaluation context
     def self.rebind(&block)
+      if block_given?
+        @stack.last.instance_exec(&block)
+      else
+        @context = @stack.empty? ? CONTEXT.__binding__ : @stack.pop.__binding__
+      end
+    end
+    
+    # Resets the SES Console's evaluation context to the value of `CONTEXT` and
+    # clears the object stack if no block is given. The context is only reset
+    # for the duration of the block if one is given.
+    # 
+    # @see .bind
+    # @return [Binding] the reset evaluation context
+    def self.reset_binding(&block)
       if block_given?
         CONTEXT.instance_exec(&block)
       else
+        @stack.clear
         @context = CONTEXT.__binding__
-        CONTEXT
       end
     end
     
-    # Evaluates the content of the macro file referenced by the passed id.
+    # Silently evaluates the content of the macro file referenced by the passed
+    # identifier.
     # 
     # @param id [Symbol] the macro ID to load
     # @raise [LoadError] if no macro with the given ID exists
@@ -288,29 +351,25 @@ module SES
     # 
     # @see .load_macros
     def self.macro(id)
-      raise LoadError, "No macro '#{id}' found." unless @macros[id]
-      evaluate(File.read(@macros[id]), true)
+      raise LoadError, "No macro '#{id.inspect}' found." unless @macros[id]
+      evaluate(File.read(@macros[id]), silent: true)
     end
     
-    # Performs evaluation of the passed string. Evaluation may be performed
-    # silently by passing a `true` value to the `silent` parameter.
+    # Performs evaluation of the passed string.
     # 
     # @note This method swallows all exceptions by design.
     # 
     # @param script [String] the script to evaluate
-    # @param silent [Boolean] whether or not to evaluate silently
+    # @param options [Hash{Symbol=>Object}] a hash of options
     # @return [Object] the return value of the passed script
-    def self.evaluate(script = '', silent = false, &blk)
-      v = blk ? @context.instance_exec(&blk) : eval('_ = ' << script, @context)
-      print(@prompt[:return], v == TOPLEVEL_BINDING ? 'main' : v.inspect, 
-        "\n") unless silent
-      v
+    def self.evaluate(script, options = {})
+      @hooks[:pre_eval].call(script, options)
+      @hooks[:post_eval].call(value = @context.eval('_ = ' << script), options)
+      value
     rescue SystemExit
       @enabled = false
-      sleep(0.1) # Prevent input from unintentionally passing to the game.
-      Win32.focus(Win32::HWND::Game)
     rescue Exception => ex
-      print("#{@prompt[:error]}#{ex.class}: #{ex.message}\n")
+      @hooks[:eval_error].call(ex, options)
       ex
     end
     
@@ -320,22 +379,22 @@ module SES
     # @param script [String, nil] the script to evaluate; `nil` to evaluate
     #   user input
     # @return [void]
-    def self.open(script = nil, &block)
+    def self.open(script = nil)
+      @enabled = true
       load_macros unless @macros
-      macro(:setup) if @macros[:setup]
-      Win32.focus(Win32::HWND::Console) unless script || block_given?
+      @hooks[:on_open].call(script)
       begin
-        print(@prompt[:input]) unless script || block_given?
-        evaluate(script || gets, &block)
-        @enabled = false if script || block_given?
+        @hooks[:on_input].call(script)
+        evaluate(script || gets)
+        @enabled = false if script
       end while @enabled
-      macro(:teardown) if @macros[:teardown]
+      @hooks[:on_close].call(script)
     end
     
     # Register this script with the SES Core if it exists.
     if SES.const_defined?(:Register)
       # Script metadata.
-      Description = Script.new(:Console, 1.3)
+      Description = Script.new(:Console, 1.4)
       Register.enter(Description)
     end
   end
@@ -357,14 +416,53 @@ class Scene_Base
     ses_console_sb_upd(*args, &block)
   end
   
-  # Enables and opens the SES Console if the SES Console's configured `TRIGGER`
-  # has been registered as triggered by the RMVX Ace `Input` module.
+  # Opens the SES Console if the SES Console's configured `TRIGGER` has been
+  # registered as triggered by the RMVX Ace `Input` module.
   # 
   # @return [void]
   def update_ses_console
-    if Input.trigger?(SES::Console::TRIGGER)
-      SES::Console.enabled = true
-      SES::Console.open
-    end
+    SES::Console.open if Input.trigger?(SES::Console::TRIGGER)
   end
+end
+# Object
+# =============================================================================
+# The superclass of all Ruby objects except `BasicObject`.
+class Object
+  # Returns a technical description of the object in the form of the object's
+  # class and address within the Ruby runtime.
+  # 
+  # @return [String] the technical description string
+  def __desc__
+    hex_id = '0x' << (__id__.even? ? __id__ << 1 : __id__ / 2).to_s(16)
+    "#{self.class.name} #{hex_id}"
+  end
+  
+  # Returns a string representing a simplified `inspect` call to the object.
+  # 
+  # @return [String] the simple inspection string
+  def simple_inspect
+    kind_of?(Numeric) ? inspect : "#<#{__desc__}>"
+  end
+end
+# Module
+# =============================================================================
+# The superclass of {Class}; essentially a class without instantiation support.
+class Module
+  # Define the `__desc__` and `simple_inspect` methods as aliases for `name`.
+  [:__desc__, :simple_inspect].each { |m| alias_method m, :name }
+end
+# TOPLEVEL_BINDING
+# =============================================================================
+# The singleton class of `TOPLEVEL_BINDING`.
+class << TOPLEVEL_BINDING
+  # Returns a simplified description of the `TOPLEVEL_BINDING`.
+  # 
+  # @return [String] "main"
+  def __desc__
+    "main"
+  end
+  
+  # Define the `simple_inspect`, `inspect`, and `to_s` methods as aliases for
+  # `__desc__`.
+  [:simple_inspect, :inspect, :to_s].each { |m| alias_method m, :__desc__ }
 end
