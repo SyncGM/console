@@ -27,12 +27,12 @@ perform tasks that only need to be run a single time per test run.
   As an example of a file to place in 'autoload/', the 'extensions.rb' file
 defines a number of extensions to the core Ruby environment used by RPG Maker
 VX Ace. Most notably, it defines methods in the `Kernel` module which delegate
-to the appropriate method in `SES::Console` (notably `bind`, `rebind`, `macro`,
-and `multiline`), which allows these methods to be used anywhere without having
-to provide the full `SES::Console` namespace. It also defines a number of
-methods on the core Ruby modules and classes which enhance debugging with the
-SES Console, so please consult that file for more information about what it
-offers.
+to the appropriate method in `SES::Console` (notably `bind`, `rebind`,
+`reset_binding`, `macro`, and `multiline`), which allows these methods to be
+used anywhere without having to provide the full `SES::Console` namespace. It
+also defines a number of methods on the core Ruby modules and classes which
+enhance debugging with the SES Console, so please consult that file for more
+information about what it offers.
 
 Downloading
 -------------------------------------------------------------------------------
