@@ -14,34 +14,15 @@ module SES::Console::Macros
   # BEGIN CONFIGURATION
   # ===========================================================================
   
-  # Default prompt to use for user input during macro evaluation.
-  SES::Console.prompt[:macro] = '?> '
-  
   # Used to search for files to automatically load when the console is opened
   # for the first time. Files which set up some form of environment should be
   # placed here.
-  AUTOLOAD = SES::Console::MACRO_DIR + '/autoload/**/*.*'
+  AUTOLOAD = SES::Console::MACRO_DIR + '/autoload/**/*.rb'
+  
   # ===========================================================================
   # END CONFIGURATION
   # ===========================================================================
-  class << self
-    # Default prompt for user input during macro execution.
-    # @return [String]
-    attr_reader :prompt
-  end
   
-  # Assign the prompt to the appropriate `SES::Console.prompt` value.
-  @prompt ||= SES::Console.prompt[:macro]
-  
-  # Customized writer for the user input prompt. Automatically updates the
-  # prompt in both the `SES::Console::Macros` and `SES::Console` modules.
-  # 
-  # @param value [String] the desired prompt
-  # @return [String] the assigned prompt
-  def prompt=(value)
-    SES::Console.prompt[:macro] = value.to_s
-    @prompt = SES::Console.prompt[:macro]
-  end
   # Setup
   # ===========================================================================
   # Provides the welcome message and logic determining its display.
