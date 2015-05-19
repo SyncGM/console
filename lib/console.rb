@@ -266,10 +266,6 @@ module SES
       # Hash of prompt styles for the console's REPL.
       # @return [Hash{Symbol => String}]
       attr_reader :prompt
-      
-      # Array of objects passed to the `SES::Console.bind` method.
-      # @return [Array<Object>]
-      attr_reader :stack
     end
     
     # Explicitly define the initial context for the Console to the binding of
@@ -278,6 +274,15 @@ module SES
     
     # Initialize the binding stack.
     @stack = []
+    
+    # Provides a reader method for the object stack, returning a duplicate
+    # of the stack.
+    #
+    # @return [Array<Object>] an array of objects passed to the
+    #   {SES::Console.bind} method
+    def self.stack
+      @stack.dup
+    end
     
     # Performs macro definition from external .rb files in the `MACRO_DIR`
     # directory.
