@@ -443,6 +443,23 @@ class Object
   def simple_inspect
     kind_of?(Numeric) ? inspect : "#<#{__desc__}>"
   end
+
+  # Customizes handling of missing constants, delegating constant handling to
+  # the object's context if the SES Console is currently enabled.
+  #
+  # @note This method exists to resolve an issue regarding the retrieval of
+  #   constants outside of the context of the {SES::Console} module.
+  #
+  # @param const [Symbol] the missing constant as a symbol
+  # @return [Object] the value of the constant if found
+  # @raise [NameError] if the constant is missing
+  def const_missing(const)
+    bind = SES::Console.context
+    if SES::Console.enabled && (obj = eval('self', bind)) != TOPLEVEL_BINDING
+      return obj.const_get(const) if obj.constants.include?(const)
+    end
+    super
+  end
 end
 # Module
 # =============================================================================
