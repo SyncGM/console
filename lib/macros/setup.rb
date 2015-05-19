@@ -48,7 +48,7 @@ module SES::Console::Macros
     # @param message [String] the message to write
     # @return [nil]
     def self.display_message(message = @message)
-      STDOUT.puts(message)
+      $stdout.puts(message)
     end
     
     # Display the message and set `@run` to true if the SES Console has not
