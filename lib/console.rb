@@ -50,8 +50,8 @@
 # 
 #   Note that changing the evaluation context via `SES::Console.bind` pushes
 # the object being bound to onto an object stack; this stack can also be
-# reversed with the `SES::Console.rebind` method, allowing you to quickly
-# navigate multiple evaluation contexts:
+# reversed with the `SES::Console.rebind` (also aliased as `unbind`) method,
+# allowing you to quickly navigate multiple evaluation contexts:
 # 
 #     self # => SES::Console
 #     SES::Console.bind(DataManager)
@@ -116,64 +116,6 @@
 # =============================================================================
 # The top-level namespace for all SES scripts.
 module SES
-  # Win32
-  # ===========================================================================
-  # Contains references to Windows API functions.
-  module Win32
-    # Reference to the `BringWindowToTop` Windows API function.
-    BringWindowToTop = Win32API.new('user32', 'BringWindowToTop', 'I', 'I')
-    
-    # Reference to the `FindWindow` Windows API function.
-    FindWindow = Win32API.new('user32', 'FindWindow', 'PP', 'I')
-    
-    # Reference to the `GetConsoleTitle` Windows API function.
-    GetConsoleTitle = Win32API.new('kernel32', 'GetConsoleTitle', 'PI', 'I')
-    
-    # Reference to the `SetConsoleTitle` Windows API function.
-    SetConsoleTitle = Win32API.new('kernel32', 'SetConsoleTitle', 'P', 'I')
-    
-    # Obtains the title of the RGSS Console window.
-    # 
-    # @return [String] the title of the RGSS Console window
-    def self.console_title
-      GetConsoleTitle.call(buffer = "\0" * 256, buffer.length - 1)
-      buffer.delete!("\0")
-    end
-    
-    # Sets the title of the RGSS Console window to the passed title.
-    # 
-    # @param title [String, nil] the new console title; `nil` or `false` to
-    #   reset the title to its default value
-    # @return [String] the new console title
-    def self.console_title=(title)
-      SetConsoleTitle.call((title || 'RGSS Console').to_s)
-    end
-    
-    # Brings the window referenced by the passed window handle to the top of
-    # the Windows Z-order and focuses it. Returns true if the window was raised
-    # successfully, false otherwise.
-    # 
-    # @param hwnd [FixNum] the window handle of the window to focus
-    # @return [Boolean] `true` if the window was focused, `false` otherwise
-    def self.focus(hwnd = HWND::Game)
-      BringWindowToTop.call(hwnd) != 0
-    end
-    
-    # HWND
-    # =========================================================================
-    # Contains references to window handles used by the Windows API. Window
-    # handles are found with explicit names to ensure that the window handles
-    # are accurate for this game in particular.
-    module HWND
-      # The window handle for the RGSS Console window.
-      Console = Win32::FindWindow.call(
-        'ConsoleWindowClass', Win32.console_title)
-      
-      # The window handle for the RGSS Player window.
-      Game = Win32::FindWindow.call(
-        'RGSS Player', load_data('Data/System.rvdata2').game_title)
-    end
-  end
   # Console
   # ===========================================================================
   # Provides methods to facilitate an interactive Ruby console environment.
@@ -181,10 +123,6 @@ module SES
     # =========================================================================
     # BEGIN CONFIGURATION
     # =========================================================================
-    
-    # The title of the console window.
-    Win32.console_title =
-      load_data('Data/System.rvdata2').game_title << ' Console'
     
     # The directory used to store external macros. Relative to your project's
     # root directory.
@@ -215,19 +153,15 @@ module SES
       eval_error: ->(error, options) do
           STDERR.puts @prompt[:error] % "#{error.class}: #{error.message}"
         end,
-      on_open: ->(script) do
-          macro(:setup) if @macros[:setup]
-          Win32.focus(Win32::HWND::Console) unless script
-        end,
+      on_open: ->(script) { macro(:setup) if @macros[:setup] },
       on_input: ->(script) do
-          print @prompt[:input] % @context.eval('simple_inspect')
+          print @prompt[:input] % @context.eval('sinspect')
           puts script if script
         end,
       on_close: ->(script) do
           macro(:teardown) if @macros[:teardown]
           sleep(0.1) # Prevent input from unintentionally passing to the game.
-          Win32.focus(Win32::HWND::Game) unless script
-        end
+        end,
     }
     
     # =========================================================================
@@ -239,6 +173,9 @@ module SES
     # The superclass of all Ruby objects except `BasicObject`.
     class ::Object
       # Provides the internal binding of this object publicly.
+      #
+      # @note This cannot be defined as an alias -- the returned binding is not
+      #   suitable.
       # 
       # @return [Binding] the object's internal binding
       def __binding__
@@ -331,6 +268,7 @@ module SES
         @context = @stack.empty? ? CONTEXT.__binding__ : @stack.pop.__binding__
       end
     end
+    class << self ; alias_method :unbind, :rebind ; end
     
     # Resets the SES Console's evaluation context to the value of `CONTEXT` and
     # clears the object stack if no block is given. The context is only reset
@@ -404,29 +342,21 @@ module SES
     end
   end
 end
-# Scene_Base
+# Graphics
 # =============================================================================
-# Superclass of all scenes within the game.
-class Scene_Base
+# Module which handles all GDI+ screen drawing.
+class << Graphics
   # Aliased to update the calling conditions for opening the SES Console.
   # 
   # @see #update
-  alias_method :ses_console_sb_upd, :update
+  alias_method :ses_console_gfx_upd, :update
   
-  # Performs scene update logic.
+  # Performs graphical updates and provides the global logic timer.
   # 
   # @return [void]
-  def update(*args, &block)
-    update_ses_console
-    ses_console_sb_upd(*args, &block)
-  end
-  
-  # Opens the SES Console if the SES Console's configured `TRIGGER` has been
-  # registered as triggered by the RMVX Ace `Input` module.
-  # 
-  # @return [void]
-  def update_ses_console
+  def update
     SES::Console.open if Input.trigger?(SES::Console::TRIGGER)
+    ses_console_gfx_upd
   end
 end
 # Object
@@ -445,33 +375,16 @@ class Object
   # Returns a string representing a simplified `inspect` call to the object.
   # 
   # @return [String] the simple inspection string
-  def simple_inspect
+  def sinspect
     kind_of?(Numeric) ? inspect : "#<#{__desc__}>"
-  end
-
-  # Customizes handling of missing constants, delegating constant handling to
-  # the object's context if the SES Console is currently enabled.
-  #
-  # @note This method exists to resolve an issue regarding the retrieval of
-  #   constants outside of the context of the {SES::Console} module.
-  #
-  # @param const [Symbol] the missing constant as a symbol
-  # @return [Object] the value of the constant if found
-  # @raise [NameError] if the constant is missing
-  def const_missing(const)
-    bind = SES::Console.context
-    if SES::Console.enabled && (obj = eval('self', bind)) != TOPLEVEL_BINDING
-      return obj.const_get(const) if obj.constants.include?(const)
-    end
-    super
   end
 end
 # Module
 # =============================================================================
 # The superclass of {Class}; essentially a class without instantiation support.
 class Module
-  # Define the `__desc__` and `simple_inspect` methods as aliases for `name`.
-  [:__desc__, :simple_inspect].each { |m| alias_method m, :name }
+  # Define the `__desc__` and `sinspect` methods as aliases for `name`.
+  [:__desc__, :sinspect].each { |m| alias_method m, :name }
 end
 # TOPLEVEL_BINDING
 # =============================================================================
@@ -484,7 +397,7 @@ class << TOPLEVEL_BINDING
     "main"
   end
   
-  # Define the `simple_inspect`, `inspect`, and `to_s` methods as aliases for
+  # Define the `sinspect`, `inspect`, and `to_s` methods as aliases for
   # `__desc__`.
-  [:simple_inspect, :inspect, :to_s].each { |m| alias_method m, :__desc__ }
+  [:sinspect, :inspect, :to_s].each { |m| alias_method m, :__desc__ }
 end
