@@ -179,7 +179,7 @@ module SES
       # 
       # @return [Binding] the object's internal binding
       def __binding__
-        binding
+        is_a?(Module) ? class_eval('binding') : binding
       end
     end
     
