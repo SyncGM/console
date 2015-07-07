@@ -151,7 +151,7 @@ module SES
           puts @prompt[:return] % value.inspect unless options[:silent]
         end,
       eval_error: ->(error, options) do
-          STDERR.puts @prompt[:error] % "#{error.class}: #{error.message}"
+          $stderr.puts @prompt[:error] % "#{error.class}: #{error.message}"
         end,
       on_open: ->(script) { macro(:setup) if @macros[:setup] },
       on_input: ->(script) do
