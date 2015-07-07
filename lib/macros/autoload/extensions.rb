@@ -26,13 +26,13 @@ module SES
     # @param end_of_input [String] the end-of-input delimiter to use
     # @return [String] the collected input
     def self.multiline(end_of_input = @prompt[:multi_end])
-      script = ''
-      loop do
-        print(@prompt[:multiline])
-        break if (input = gets).chomp == end_of_input
-        script << input
+      ''.tap do |script|
+        loop do
+          print(@prompt[:multiline])
+          break if (input = gets).chomp == end_of_input
+          script << input
+        end
       end
-      script
     end
   end
 end
@@ -40,14 +40,6 @@ end
 # =============================================================================
 # Superclass of all objects except `BasicObject`.
 class Object
-  # Provides a sorted array of the instance methods defined on this object in
-  # particular.
-  # 
-  # @return [Array<Symbol>] a sorted list of instance methods
-  def instance_methods
-    (methods - self.class.superclass.methods).sort!
-  end
-  
   # Determines if the object is included in the given collection.
   # 
   # @example

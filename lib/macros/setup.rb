@@ -17,7 +17,7 @@ module SES::Console::Macros
   # Used to search for files to automatically load when the console is opened
   # for the first time. Files which set up some form of environment should be
   # placed here.
-  AUTOLOAD = SES::Console::MACRO_DIR + '/autoload/**/*.rb'
+  AUTOLOAD = "#{SES::Console::MACRO_DIR}/autoload/**/*.rb"
   
   # ===========================================================================
   # END CONFIGURATION
@@ -54,7 +54,7 @@ module SES::Console::Macros
     # Display the message and set `@run` to true if the SES Console has not
     # yet been run during this test run.
     unless run?
-      Dir[AUTOLOAD].each { |macro| load macro }
+      Dir[AUTOLOAD].each(&method(:load))
       display_message
       @run = true
     end
