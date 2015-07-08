@@ -394,7 +394,7 @@ class << TOPLEVEL_BINDING
   # 
   # @return [String] "main"
   def __desc__
-    "main"
+    'main'
   end
   
   # Define the `sinspect`, `inspect`, and `to_s` methods as aliases for
