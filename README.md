@@ -1,5 +1,5 @@
 
-Console v1.5 by Solistra and Enelvon
+Console v1.6 by Solistra and Enelvon
 =============================================================================
 
 Summary

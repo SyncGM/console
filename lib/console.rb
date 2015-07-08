@@ -1,5 +1,5 @@
 #--
-# Console v1.5 by Solistra and Enelvon
+# Console v1.6 by Solistra and Enelvon
 # =============================================================================
 # 
 # Summary
@@ -337,7 +337,7 @@ module SES
     # Register this script with the SES Core if it exists.
     if SES.const_defined?(:Register)
       # Script metadata.
-      Description = Script.new(:Console, 1.5)
+      Description = Script.new(:Console, 1.6)
       Register.enter(Description)
     end
   end
