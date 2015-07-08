@@ -369,7 +369,7 @@ class Object
   # @return [String] the technical description string
   def __desc__
     hex_id = '0x' << (__id__.even? ? __id__ << 1 : __id__ / 2).to_s(16)
-    "#{self.class.name} #{hex_id}"
+    "#{self.class.name}:#{hex_id}"
   end
   
   # Returns a string representing a simplified `inspect` call to the object.
