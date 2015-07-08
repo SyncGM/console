@@ -359,17 +359,37 @@ class << Graphics
     ses_console_gfx_upd
   end
 end
+# BasicObject
+# =============================================================================
+# The blank-slate superclass of all Ruby objects.
+class BasicObject
+  # @return [Class] the `Class` object for this {BasicObject} instance
+  def __class__
+    BasicObject
+  end
+
+  # @return [String] a simple inspection string for this {BasicObject} instance
+  def inspect
+    '#<BasicObject>'
+  end
+
+  # Define the `__desc__` and `sinspect` methods as aliases for `inspect`.
+  [:__desc__, :sinspect].each { |m| alias_method m, :inspect }
+end
 # Object
 # =============================================================================
 # The superclass of all Ruby objects except `BasicObject`.
 class Object
+  # Aliased to provide a suitable alternative method name.
+  alias_method :__class__, :class
+
   # Returns a technical description of the object in the form of the object's
   # class and address within the Ruby runtime.
   # 
   # @return [String] the technical description string
   def __desc__
     hex_id = '0x' << (__id__.even? ? __id__ << 1 : __id__ / 2).to_s(16)
-    "#{self.class.name}:#{hex_id}"
+    "#{self.__class__.name}:#{hex_id}"
   end
   
   # Returns a string representing a simplified `inspect` call to the object.
