@@ -249,6 +249,29 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#reset_binding-instance_method" title="#reset_binding (instance method)">- (Object) <strong>reset_binding</strong>(&amp;block) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Delegator for the <span class='object_link'><a href="SES/Console.html#reset_binding-class_method" title="SES::Console.reset_binding (method)">SES::Console.reset_binding</a></span> method.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -290,12 +313,12 @@
       <pre class="lines">
 
 
-171
-172
-173</pre>
+163
+164
+165</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 171</span>
+      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 163</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bind'>bind</span><span class='lparen'>(</span><span class='id identifier rubyid_object'>object</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_bind'>bind</span><span class='lparen'>(</span><span class='id identifier rubyid_object'>object</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -366,12 +389,12 @@ own <code>exit</code> method defined (such as <code>SceneManager</code>).</p>
       <pre class="lines">
 
 
-199
-200
-201</pre>
+197
+198
+199</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 199</span>
+      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 197</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_close'>close</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>SystemExit</span> <span class='kw'>if</span> <span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_enabled'>enabled</span>
@@ -413,12 +436,12 @@ own <code>exit</code> method defined (such as <code>SceneManager</code>).</p>
       <pre class="lines">
 
 
-183
-184
-185</pre>
+181
+182
+183</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 183</span>
+      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 181</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_macro'>macro</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
   <span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_macro'>macro</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
@@ -479,12 +502,12 @@ some unintended side effects.</p>
       <pre class="lines">
 
 
-165
-166
-167</pre>
+157
+158
+159</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 165</span>
+      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 157</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_main'>main</span>
   <span class='const'>TOPLEVEL_BINDING</span>
@@ -526,12 +549,12 @@ some unintended side effects.</p>
       <pre class="lines">
 
 
-189
-190
-191</pre>
+187
+188
+189</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 189</span>
+      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 187</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_multiline'>multiline</span><span class='lparen'>(</span><span class='id identifier rubyid_end_of_input'>end_of_input</span> <span class='op'>=</span> <span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_prompt'>prompt</span><span class='lbracket'>[</span><span class='symbol'>:multi_end</span><span class='rbracket'>]</span><span class='rparen'>)</span>
   <span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_multiline'>multiline</span><span class='lparen'>(</span><span class='id identifier rubyid_end_of_input'>end_of_input</span><span class='rparen'>)</span>
@@ -573,15 +596,62 @@ some unintended side effects.</p>
       <pre class="lines">
 
 
-177
-178
-179</pre>
+169
+170
+171</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 177</span>
+      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 169</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_rebind'>rebind</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_rebind'>rebind</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="reset_binding-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>reset_binding</strong>(&amp;block) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Delegator for the <span class='object_link'><a href="SES/Console.html#reset_binding-class_method" title="SES::Console.reset_binding (method)">SES::Console.reset_binding</a></span> method.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="SES/Console.html#reset_binding-class_method" title="SES::Console.reset_binding (method)">SES::Console.reset_binding</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+175
+176
+177</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 175</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_reset_binding'>reset_binding</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+	<span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_reset_binding'>reset_binding</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -593,7 +663,7 @@ some unintended side effects.</p>
 </div>
 
     <div id="footer">
-  Generated on Fri Nov 28 15:01:17 2014 by
+  Generated on Wed Jul  8 22:46:33 2015 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-1.9.3).
 </div>

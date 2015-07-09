@@ -79,9 +79,7 @@
   
   
     <dt class="r1 last">Defined in:</dt>
-    <dd class="r1 last">lib/macros/setup.rb<span class="defines">,<br />
-  lib/macros/shell/cmd.rb,<br /> lib/macros/shell/run.rb,<br /> lib/macros/shell/tree.rb,<br /> lib/macros/shell/clear.rb,<br /> lib/macros/shell/backup.rb,<br /> lib/macros/party/take_all.rb,<br /> lib/macros/party/give_all.rb,<br /> lib/macros/player/through.rb,<br /> lib/macros/utility/marshal.rb,<br /> lib/macros/files/read_file.rb,<br /> lib/macros/player/transfer.rb,<br /> lib/macros/files/write_file.rb,<br /> lib/macros/files/delete_file.rb,<br /> lib/macros/files/append_file.rb,<br /> lib/macros/utility/reset_data.rb,<br /> lib/macros/utility/kill_events.rb,<br /> lib/macros/autoload/shell_setup.rb,<br /> lib/macros/autoload/files_setup.rb,<br /> lib/macros/utility/restore_events.rb</span>
-</dd>
+    <dd class="r1 last">lib/macros/setup.rb</dd>
   
 </dl>
 <div class="clear"></div>
@@ -102,7 +100,7 @@
 <p class="children">
   
     
-      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Macros/Files.html" title="SES::Console::Macros::Files (module)">Files</a></span>, <span class='object_link'><a href="Macros/Party.html" title="SES::Console::Macros::Party (module)">Party</a></span>, <span class='object_link'><a href="Macros/Player.html" title="SES::Console::Macros::Player (module)">Player</a></span>, <span class='object_link'><a href="Macros/Setup.html" title="SES::Console::Macros::Setup (module)">Setup</a></span>, <span class='object_link'><a href="Macros/Shell.html" title="SES::Console::Macros::Shell (module)">Shell</a></span>, <span class='object_link'><a href="Macros/Utility.html" title="SES::Console::Macros::Utility (module)">Utility</a></span>
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Macros/Setup.html" title="SES::Console::Macros::Setup (module)">Setup</a></span>
     
   
     
@@ -128,7 +126,7 @@ placed here.</p>
 
 </div>
         </dt>
-        <dd><pre class="code"><span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='op'>::</span><span class='const'>MACRO_DIR</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>/autoload/**/*.*</span><span class='tstring_end'>'</span></span></pre></dd>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='op'>::</span><span class='const'>MACRO_DIR</span><span class='rbrace'>}</span><span class='tstring_content'>/autoload/**/*.rb</span><span class='tstring_end'>&quot;</span></span></pre></dd>
       
     </dl>
   
@@ -136,227 +134,15 @@ placed here.</p>
 
 
 
-  <h2>Class Attribute Summary <small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
-  <ul class="summary">
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#prompt-class_method" title="prompt (class method)">+ (String) <strong>prompt</strong> </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Default prompt for user input during macro execution.</p>
-</div></span>
-  
-</li>
-
-    
-  </ul>
 
 
 
 
-  
-    <h2>
-      Instance Method Summary
-      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
-    </h2>
-
-    <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#prompt%3D-instance_method" title="#prompt= (instance method)">- (String) <strong>prompt=</strong>(value) </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Customized writer for the user input prompt.</p>
-</div></span>
-  
-</li>
-
-      
-    </ul>
-  
-
-
-  <div id="class_attr_details" class="attr_details">
-    <h2>Class Attribute Details</h2>
-    
-      
-      <span id=""></span>
-      <div class="method_details first">
-  <h3 class="signature first" id="prompt-class_method">
-  
-    + (<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>) <strong>prompt</strong>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Default prompt for user input during macro execution.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-30
-31
-32</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/setup.rb', line 30</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_prompt'>prompt</span>
-  <span class='ivar'>@prompt</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-  </div>
-
-
-  <div id="instance_method_details" class="method_details_list">
-    <h2>Instance Method Details</h2>
-
-    
-      <div class="method_details first">
-  <h3 class="signature first" id="prompt=-instance_method">
-  
-    - (<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>) <strong>prompt=</strong>(value) 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Customized writer for the user input prompt. Automatically updates the
-prompt in both the <code>SES::Console::Macros</code> and <code>SES::Console</code> modules.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>value</span>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the desired prompt</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the assigned prompt</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-41
-42
-43
-44</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/setup.rb', line 41</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_prompt='>prompt=</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
-  <span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_prompt'>prompt</span><span class='lbracket'>[</span><span class='symbol'>:macro</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
-  <span class='ivar'>@prompt</span> <span class='op'>=</span> <span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_prompt'>prompt</span><span class='lbracket'>[</span><span class='symbol'>:macro</span><span class='rbracket'>]</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-  </div>
 
 </div>
 
     <div id="footer">
-  Generated on Fri Nov 28 15:01:17 2014 by
+  Generated on Wed Jul  8 22:46:33 2015 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-1.9.3).
 </div>

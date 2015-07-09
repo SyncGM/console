@@ -73,7 +73,7 @@
   
     <dt class="r1">Inherits:</dt>
     <dd class="r1">
-      <span class="inheritName">BasicObject</span>
+      <span class="inheritName"><span class='object_link'><a href="BasicObject.html" title="BasicObject (class)">BasicObject</a></span></span>
       
       </dd>
     
@@ -87,7 +87,7 @@
   
     <dt class="r2 last">Defined in:</dt>
     <dd class="r2 last">lib/console.rb<span class="defines">,<br />
-  lib/macros/autoload/extensions.rb</span>
+  lib/console.rb,<br /> lib/macros/autoload/extensions.rb</span>
 </dd>
   
 </dl>
@@ -146,6 +146,29 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#__desc__-instance_method" title="#__desc__ (instance method)">- (String) <strong>__desc__</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns a technical description of the object in the form of the object&#39;s class and address within the Ruby runtime.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#in%3F-instance_method" title="#in? (instance method)">- (Boolean) <strong>in?</strong>(other) </a>
     
 
@@ -169,29 +192,6 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#instance_methods-instance_method" title="#instance_methods (instance method)">- (Array&lt;Symbol&gt;) <strong>instance_methods</strong> </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Provides a sorted array of the instance methods defined on this object in particular.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#itself-instance_method" title="#itself (instance method)">- (self) <strong>itself</strong> </a>
     
 
@@ -207,6 +207,29 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Returns the object itself.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sinspect-instance_method" title="#sinspect (instance method)">- (String) <strong>sinspect</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns a string representing a simplified <code>inspect</code> call to the object.</p>
 </div></span>
   
 </li>
@@ -255,7 +278,15 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Provides the internal binding of this object publicly.</p>
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>This cannot be defined as an alias -- the returned binding is not
+suitable.</p>
+</div>
+  </div>
+
+<p>Provides the internal binding of this object publicly.</p>
 
 
   </div>
@@ -286,15 +317,75 @@
       <pre class="lines">
 
 
-204
-205
-206</pre>
+181
+182
+183</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/console.rb', line 204</span>
+      <pre class="code"><span class="info file"># File 'lib/console.rb', line 181</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid___binding__'>__binding__</span>
-  <span class='id identifier rubyid_binding'>binding</span>
+  <span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Module</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_class_eval'>class_eval</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>binding</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_binding'>binding</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="__desc__-instance_method">
+  
+    - (<tt><span class='object_link'><a href="String.html" title="String (class)">String</a></span></tt>) <strong>__desc__</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a technical description of the object in the form of the object&#39;s
+class and address within the Ruby runtime.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the technical description string</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+390
+391
+392
+393</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/console.rb', line 390</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid___desc__'>__desc__</span>
+  <span class='id identifier rubyid_hex_id'>hex_id</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>0x</span><span class='tstring_end'>'</span></span> <span class='op'>&lt;&lt;</span> <span class='lparen'>(</span><span class='id identifier rubyid___id__'>__id__</span><span class='period'>.</span><span class='id identifier rubyid_even?'>even?</span> <span class='op'>?</span> <span class='id identifier rubyid___id__'>__id__</span> <span class='op'>&lt;&lt;</span> <span class='int'>1</span> <span class='op'>:</span> <span class='id identifier rubyid___id__'>__id__</span> <span class='op'>/</span> <span class='int'>2</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='lparen'>(</span><span class='int'>16</span><span class='rparen'>)</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid___class__'>__class__</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rbrace'>}</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_hex_id'>hex_id</span><span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -371,73 +462,15 @@ otherwise</p>
       <pre class="lines">
 
 
-59
-60
-61</pre>
+51
+52
+53</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_in?'>in?</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span> <span class='kw'>rescue</span> <span class='kw'>false</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="instance_methods-instance_method">
-  
-    - (<tt>Array&lt;Symbol&gt;</tt>) <strong>instance_methods</strong> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Provides a sorted array of the instance methods defined on this object in
-particular.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Array&lt;Symbol&gt;</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>a sorted list of instance methods</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-47
-48
-49</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 47</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_instance_methods'>instance_methods</span>
-  <span class='lparen'>(</span><span class='id identifier rubyid_methods'>methods</span> <span class='op'>-</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_superclass'>superclass</span><span class='period'>.</span><span class='id identifier rubyid_methods'>methods</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_sort!'>sort!</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -482,12 +515,12 @@ particular.</p>
       <pre class="lines">
 
 
-66
-67
-68</pre>
+58
+59
+60</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 66</span>
+      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_itself'>itself</span>
   <span class='kw'>self</span>
@@ -498,9 +531,66 @@ particular.</p>
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="sinspect-instance_method">
+  
+    - (<tt><span class='object_link'><a href="String.html" title="String (class)">String</a></span></tt>) <strong>sinspect</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a string representing a simplified <code>inspect</code> call to the object.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the simple inspection string</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+398
+399
+400</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/console.rb', line 398</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_sinspect'>sinspect</span>
+  <span class='id identifier rubyid_kind_of?'>kind_of?</span><span class='lparen'>(</span><span class='const'>Numeric</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_inspect'>inspect</span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>#&lt;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___desc__'>__desc__</span><span class='rbrace'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="to_const-instance_method">
   
-    - (<tt>Class</tt>, <tt>Module</tt>) <strong>to_const</strong> 
+    - (<tt>Class</tt>, <tt><span class='object_link'><a href="Module.html" title="Module (class)">Module</a></span></tt>) <strong>to_const</strong> 
   
 
   
@@ -530,7 +620,7 @@ constant value.</p>
     <li>
       
       
-        <span class='type'>(<tt>Class</tt>, <tt>Module</tt>)</span>
+        <span class='type'>(<tt>Class</tt>, <tt><span class='object_link'><a href="Module.html" title="Module (class)">Module</a></span></tt>)</span>
       
       
       
@@ -548,12 +638,12 @@ constant value.</p>
       <pre class="lines">
 
 
-77
-78
-79</pre>
+69
+70
+71</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/macros/autoload/extensions.rb', line 69</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_const'>to_const</span>
   <span class='lbracket'>[</span><span class='const'>Module</span><span class='comma'>,</span> <span class='const'>Class</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_base'>base</span><span class='op'>|</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span> <span class='op'>==</span> <span class='id identifier rubyid_base'>base</span> <span class='rbrace'>}</span> <span class='op'>?</span> <span class='kw'>self</span> <span class='op'>:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span>
@@ -568,7 +658,7 @@ constant value.</p>
 </div>
 
     <div id="footer">
-  Generated on Fri Nov 28 15:01:17 2014 by
+  Generated on Wed Jul  8 22:46:33 2015 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-1.9.3).
 </div>

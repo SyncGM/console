@@ -61,7 +61,7 @@
 
     <iframe id="search_frame"></iframe>
 
-    <div id="content"><div id='filecontents'><h1>Console v1.3 by Solistra and Enelvon</h1>
+    <div id="content"><div id='filecontents'><h1>Console v1.6 by Solistra and Enelvon</h1>
 
 <h2>Summary</h2>
 
@@ -108,16 +108,35 @@ on the current map, use the following:</p>
 
 <p>All code entered into the interpreter from that point on would be evaluated
 in the context of event 5 on the current map. You can also bind the console
-to the top-level Ruby execution context by passing <code>main</code> to the <code>bind</code>
-method, which will evaluate code in Main. To rebind the console back to the
-user-defined <code>CONTEXT</code>, use the method <code>SES::Console.rebind</code>.</p>
+to the top-level Ruby execution context by passing <code>TOPLEVEL_BINDING</code> to the
+<code>bind</code> method, which will evaluate code in <code>main</code>. To rebind the console back
+to the user-defined <code>CONTEXT</code>, use the method <code>SES::Console.reset_binding</code>.</p>
 
-<p><strong>NOTE:</strong> You can also temporarily bind or rebind the SES Console&#39;s context
-by passing a block to the <code>SES::Console.bind</code> and <code>SES::Console.rebind</code>
-methods like so:</p>
+<p>Note that changing the evaluation context via <code>SES::Console.bind</code> pushes
+the object being bound to onto an object stack; this stack can also be
+reversed with the <code>SES::Console.rebind</code> method, allowing you to quickly
+navigate multiple evaluation contexts:</p>
 
 <pre class="code ruby"><code class="ruby"><span class='kw'>self</span> <span class='comment'># =&gt; SES::Console
-</span><span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_bind'>bind</span><span class='lparen'>(</span><span class='id identifier rubyid_main'>main</span><span class='rparen'>)</span> <span class='kw'>do</span>
+</span><span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_bind'>bind</span><span class='lparen'>(</span><span class='const'>DataManager</span><span class='rparen'>)</span>
+<span class='kw'>self</span> <span class='comment'># =&gt; DataManager
+</span><span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_rebind'>rebind</span>
+<span class='kw'>self</span> <span class='comment'># =&gt; SES::Console
+</span></code></pre>
+
+<p>Calling <code>SES::Console.reset_binding</code> both resets the evaluation context to
+the default context and clears the object stack.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_reset_binding'>reset_binding</span>
+<span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_stack'>stack</span> <span class='comment'># =&gt; []
+</span></code></pre>
+
+<p><strong>NOTE:</strong> You can also temporarily bind or rebind the SES Console&#39;s context
+by passing a block to the <code>SES::Console.bind</code>, <code>SES::Console.rebind</code>, and
+<code>SES::Console.reset_binding</code> methods like so:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='kw'>self</span> <span class='comment'># =&gt; SES::Console
+</span><span class='const'>SES</span><span class='op'>::</span><span class='const'>Console</span><span class='period'>.</span><span class='id identifier rubyid_bind'>bind</span><span class='lparen'>(</span><span class='const'>TOPLEVEL_BINDING</span><span class='rparen'>)</span> <span class='kw'>do</span>
   <span class='comment'># Evaluation inside the block now takes place within `main`.
 </span>  <span class='kw'>self</span> <span class='comment'># =&gt; main
 </span><span class='kw'>end</span>
@@ -141,11 +160,11 @@ run in test mode will <em>not</em> be found automatically. If this occurs, you w
 have to rebuild the macro listing by calling the <code>SES::Console.load_macros</code>
 method. Once called, all detected macros will be added to the <code>@macros</code> hash.</p>
 
-<p><strong>NOTE:</strong> Two macros have special functionality: &#39;setup&#39; and &#39;teardown&#39;.
-The &#39;setup&#39; macro is run whenever the SES Console is opened via its <code>open</code>
-method, and the &#39;teardown&#39; macro is run whenever the opened console has been
-exited. Use these macros for any code you want to be run whenever the console
-is opened or exited by user or script input.</p>
+<p><strong>NOTE:</strong> By default, two macros have special functionality: &#39;setup&#39; and
+&#39;teardown&#39;. The &#39;setup&#39; macro is run whenever the SES Console is opened via
+its <code>open</code> method, and the &#39;teardown&#39; macro is run whenever the opened
+console has been closed. Use these macros for any code you want to be run
+whenever the console is opened or closed by user or script input.</p>
 
 <h2>License</h2>
 
@@ -155,13 +174,13 @@ information.</p>
 
 <h2>Installation</h2>
 
-<p>Place this script below the SES Core (v2.0) script (if you are using it) or
-the Materials header, but above all other custom scripts. This script does
-not require the SES Core (v2.0), but it is recommended.</p>
+<p>Place this script below the SES Core (v2.0 or higher) script (if you are
+using it) or the Materials header, but above all other custom scripts. This
+script does not require the SES Core, but it is highly recommended.</p>
 </div></div>
 
     <div id="footer">
-  Generated on Fri Nov 28 15:01:16 2014 by
+  Generated on Wed Jul  8 22:46:33 2015 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-1.9.3).
 </div>
