@@ -401,7 +401,7 @@ class Object
 end
 # Module
 # =============================================================================
-# The superclass of {Class}; essentially a class without instantiation support.
+# The superclass of `Class`; essentially a class without instantiation support.
 class Module
   # Define the `__desc__` and `sinspect` methods as aliases for `name`.
   [:__desc__, :sinspect].each { |m| alias_method m, :name }
